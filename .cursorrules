@@ -1,0 +1,93 @@
+# GSoft Node.js Monorepo - Cursor Rules
+
+## Project Overview
+This is a Node.js monorepo managed with pnpm workspaces. The backend service is an Express.js REST API with MongoDB.
+
+## Tech Stack
+- **Runtime**: Node.js 24 (CommonJS modules)
+- **Package Manager**: pnpm 9+ with workspaces
+- **Backend**: Express.js + Mongoose + Passport.js
+- **Testing**: Jest + Supertest
+- **Linting**: ESLint 9 (flat config) + Prettier
+- **CI/CD**: GitHub Actions + semantic-release
+
+## Repository Structure
+```
+/                           # Monorepo root
+├── services/backend/       # Express.js API service
+│   ├── src/
+│   │   ├── config/         # App configuration (env, logger, passport, roles, tokens)
+│   │   ├── controllers/    # Route controllers (handle request/response)
+│   │   ├── middlewares/     # Express middlewares (auth, validate, rateLimiter, error)
+│   │   ├── models/         # Mongoose models (user, token)
+│   │   ├── routes/v1/      # API route definitions
+│   │   ├── services/       # Business logic layer
+│   │   ├── utils/          # Shared utilities (ApiError, catchAsync, pick)
+│   │   └── validations/    # Joi validation schemas
+│   └── tests/              # Integration & unit tests
+├── .github/workflows/      # CI/CD pipelines
+└── *.config.js             # Root-level tooling configs
+```
+
+## ECMAScript Best Practices
+- Use modern ECMAScript features available in Node.js 24:
+  - Destructuring: `const { name, email } = req.body;`
+  - Spread/rest: `const merged = { ...defaults, ...overrides };`
+  - Optional chaining: `user?.profile?.avatar`
+  - Nullish coalescing: `const limit = query.limit ?? 10;`
+  - Array methods: `map`, `filter`, `reduce`, `find`, `some`, `every` — avoid manual loops where these are clearer
+  - Template literals for string interpolation: `` `User ${id} not found` ``
+  - `Object.entries()`, `Object.keys()`, `Object.values()` for object iteration
+  - `Promise.all()` / `Promise.allSettled()` for concurrent async operations
+  - Short-circuit evaluation: `isAdmin && grantAccess()`
+- Always use `const` by default. Use `let` only when reassignment is truly needed.
+- Use strict equality (`===` / `!==`) — never loose equality.
+- Use early returns to avoid deep nesting.
+- Keep functions small and single-purpose.
+
+## Code Conventions
+
+### DO
+- Use CommonJS (`require`/`module.exports`) — NOT ES modules
+- Follow the controller → service → model layered architecture
+- Use `httpStatus` constants instead of magic numbers (e.g., `httpStatus.OK` not `200`)
+- Throw `ApiError` for all application errors
+- Wrap async route handlers with `catchAsync`
+- Validate all request input with Joi schemas in `validations/`
+- Write integration tests using Supertest
+- Use conventional commits: `feat(backend):`, `fix(backend):`, `chore(ci):`
+
+### DON'T
+- Don't use ES module syntax (`import`/`export`)
+- Don't put business logic in controllers — delegate to services
+- Don't use `var` — use `const` by default, `let` when reassignment is needed
+- Don't catch errors in controllers — let the error middleware handle them
+- Don't hardcode configuration values — use environment variables via `config/`
+- Don't skip input validation on any endpoint
+
+## Anti-Over-Engineering Rules
+- Write the simplest code that solves the problem. No premature abstractions.
+- Don't create utility functions, helpers, or wrappers for one-time operations.
+- Don't add error handling for impossible scenarios. Trust internal code paths.
+- Don't add feature flags, config options, or extensibility for hypothetical future use.
+- Three similar lines of code is better than one abstraction used three times.
+- Don't add comments for self-explanatory code. Don't add JSDoc unless it's a public API.
+- Don't refactor or "improve" surrounding code when fixing a bug or adding a feature.
+- Don't add backwards-compatibility shims. Change the code directly.
+- Only validate at system boundaries (user input, external APIs). Don't defensive-code internal functions.
+- Avoid deep class hierarchies and complex design patterns. Prefer plain functions and objects.
+
+## Key Patterns
+- **Error handling**: `ApiError` → `errorHandler` middleware → structured JSON response
+- **Auth**: JWT via Passport.js, role-based access (user, admin)
+- **Pagination**: Mongoose plugin with `sortBy`, `limit`, `page` query params
+- **Config**: `dotenv` → `joi` validation → typed config object
+
+## Build & Test Commands
+```bash
+pnpm install          # Install all dependencies
+pnpm dev              # Start backend in dev mode
+pnpm test             # Run all tests
+pnpm lint             # Run ESLint
+pnpm format:check     # Check Prettier formatting
+```

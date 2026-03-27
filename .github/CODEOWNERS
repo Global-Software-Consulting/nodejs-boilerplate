@@ -1,0 +1,13 @@
+# Default owners for everything in the repo
+*                                           @gsoft/engineering
+
+# Root config files
+/*.config.js                                @gsoft/platform-team
+/.github/                                   @gsoft/platform-team
+
+# Backend service
+/services/backend/                          @gsoft/backend-team
+
+# Security-sensitive files require security team review
+/services/backend/src/middlewares/auth.js   @gsoft/backend-team @gsoft/security-team
+/services/backend/src/config/passport/passport.config.js  @gsoft/backend-team @gsoft/security-team

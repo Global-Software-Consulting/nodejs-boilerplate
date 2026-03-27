@@ -1,0 +1,103 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  changes:
+    name: Detect changes
+    runs-on: ubuntu-latest
+    outputs:
+      backend: ${{ steps.filter.outputs.backend }}
+      root: ${{ steps.filter.outputs.root }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            backend:
+              - 'services/backend/**'
+            root:
+              - 'package.json'
+              - 'pnpm-workspace.yaml'
+              - 'eslint.config.js'
+              - 'prettier.config.js'
+              - 'commitlint.config.js'
+              - '.github/workflows/**'
+              - '.nvmrc'
+              - '.node-version'
+              - '.npmrc'
+              - '.releaserc.json'
+
+  lint-root:
+    name: Lint root configs
+    needs: changes
+    if: needs.changes.outputs.root == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm format:check
+      - run: pnpm lint
+
+  backend:
+    name: Backend (Node ${{ matrix.node-version }})
+    needs: changes
+    if: needs.changes.outputs.backend == 'true' || needs.changes.outputs.root == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [24]
+    services:
+      mongodb:
+        image: mongo:7
+        ports:
+          - 27017:27017
+    env:
+      MONGODB_URL: mongodb://localhost:27017/test-db
+      JWT_SECRET: test-jwt-secret
+      JWT_ACCESS_EXPIRATION_MINUTES: 30
+      JWT_REFRESH_EXPIRATION_DAYS: 30
+      PORT: 3000
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @gsoft/backend lint
+      - run: pnpm --filter @gsoft/backend format:check
+      - run: pnpm --filter @gsoft/backend test:ci
+
+  ci-success:
+    name: CI Success
+    if: always()
+    needs: [lint-root, backend]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check all jobs
+        run: |
+          if [[ "${{ needs.lint-root.result }}" == "failure" || "${{ needs.backend.result }}" == "failure" ]]; then
+            echo "One or more jobs failed"
+            exit 1
+          fi
+          echo "All jobs passed or were skipped"

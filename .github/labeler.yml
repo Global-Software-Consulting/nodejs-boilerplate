@@ -1,0 +1,44 @@
+'service: backend':
+  - changed-files:
+      - any-glob-to-any-file: 'services/backend/**'
+
+'area: ci':
+  - changed-files:
+      - any-glob-to-any-file: '.github/**'
+
+'area: config':
+  - changed-files:
+      - any-glob-to-any-file:
+          - '*.config.js'
+          - '.npmrc'
+          - '.nvmrc'
+          - '.node-version'
+          - '.editorconfig'
+          - '.releaserc.json'
+          - 'pnpm-workspace.yaml'
+
+'area: docs':
+  - changed-files:
+      - any-glob-to-any-file:
+          - '**/*.md'
+          - 'LICENSE'
+
+'area: tests':
+  - changed-files:
+      - any-glob-to-any-file:
+          - '**/*.test.js'
+          - '**/*.spec.js'
+          - '**/tests/**'
+
+'area: docker':
+  - changed-files:
+      - any-glob-to-any-file:
+          - '**/Dockerfile*'
+          - '**/docker-compose*.yml'
+          - '**/.dockerignore'
+
+'dependencies':
+  - changed-files:
+      - any-glob-to-any-file:
+          - '**/package.json'
+          - 'pnpm-lock.yaml'

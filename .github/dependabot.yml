@@ -1,0 +1,48 @@
+version: 2
+
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    commit-message:
+      prefix: 'chore(deps):'
+    groups:
+      root-dependencies:
+        patterns:
+          - '*'
+    labels:
+      - dependencies
+    open-pull-requests-limit: 10
+
+  - package-ecosystem: npm
+    directory: /services/backend
+    schedule:
+      interval: weekly
+      day: monday
+    commit-message:
+      prefix: 'chore(deps):'
+    groups:
+      backend-minor:
+        update-types:
+          - minor
+          - patch
+        patterns:
+          - '*'
+    labels:
+      - dependencies
+      - 'service: backend'
+    open-pull-requests-limit: 10
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    commit-message:
+      prefix: 'chore(ci):'
+    labels:
+      - dependencies
+      - 'area: ci'
+    open-pull-requests-limit: 5
