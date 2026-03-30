@@ -1,0 +1,71 @@
+[
+  {
+    "id": "flow-1",
+    "type": "tab",
+    "label": "Webhook Router",
+    "disabled": false
+  },
+  {
+    "id": "webhook-in",
+    "type": "http in",
+    "z": "flow-1",
+    "name": "Webhook Input",
+    "url": "/webhook",
+    "method": "post",
+    "x": 150,
+    "y": 100,
+    "wires": [["switch-1"]]
+  },
+  {
+    "id": "switch-1",
+    "type": "switch",
+    "z": "flow-1",
+    "name": "Route by type",
+    "property": "payload.type",
+    "rules": [
+      { "t": "eq", "v": "user.created", "vt": "str" },
+      { "t": "eq", "v": "order.completed", "vt": "str" },
+      { "t": "else" }
+    ],
+    "x": 350,
+    "y": 100,
+    "wires": [["debug-user"], ["debug-order"], ["debug-unknown"]]
+  },
+  {
+    "id": "debug-user",
+    "type": "debug",
+    "z": "flow-1",
+    "name": "User Event",
+    "x": 550,
+    "y": 60,
+    "wires": []
+  },
+  {
+    "id": "debug-order",
+    "type": "debug",
+    "z": "flow-1",
+    "name": "Order Event",
+    "x": 550,
+    "y": 100,
+    "wires": []
+  },
+  {
+    "id": "debug-unknown",
+    "type": "debug",
+    "z": "flow-1",
+    "name": "Unknown Event",
+    "x": 550,
+    "y": 140,
+    "wires": []
+  },
+  {
+    "id": "webhook-out",
+    "type": "http response",
+    "z": "flow-1",
+    "name": "Respond 200",
+    "statusCode": "200",
+    "x": 550,
+    "y": 200,
+    "wires": []
+  }
+]

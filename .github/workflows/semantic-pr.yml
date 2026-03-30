@@ -1,0 +1,40 @@
+name: Semantic PR
+
+on:
+  pull_request_target:
+    types: [opened, edited, synchronize]
+
+permissions:
+  pull-requests: read
+
+jobs:
+  check:
+    name: Validate PR title
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: amannn/action-semantic-pull-request@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          types: |
+            wip
+            feat
+            fix
+            style
+            refactor
+            test
+            docs
+            chore
+            hotfix
+          scopes: |
+            backend
+            frontend
+            root
+            ci
+            deps
+            release
+          requireScope: true
+          subjectPattern: ^.{10,100}$
+          subjectPatternError: |
+            PR title subject must be between 10 and 100 characters.

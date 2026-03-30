@@ -1,0 +1,25 @@
+name: Lock Threads
+
+on:
+  schedule:
+    - cron: '0 1 * * *'
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  lock:
+    name: Lock inactive threads
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: dessant/lock-threads@v5
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          issue-inactive-days: 90
+          issue-lock-reason: resolved
+          pr-inactive-days: 60
+          pr-lock-reason: resolved
+          exempt-issue-labels: pinned,security
+          exempt-pr-labels: pinned,security
