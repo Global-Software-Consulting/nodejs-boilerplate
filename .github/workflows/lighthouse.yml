@@ -1,10 +1,12 @@
 name: Lighthouse CI
 
 on:
-  pull_request:
-    branches: [main, develop]
-    paths:
-      - 'services/frontend/**'
+  # Disabled until frontend has a build URL configured in lighthouserc.json
+  # pull_request:
+  #   branches: [main, develop]
+  #   paths:
+  #     - 'services/frontend/**'
+  workflow_dispatch:
 
 permissions:
   contents: read

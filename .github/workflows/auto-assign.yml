@@ -12,8 +12,9 @@ jobs:
   assign:
     name: Auto assign author and reviewers
     runs-on: ubuntu-latest
+    if: github.actor != 'dependabot[bot]'
     timeout-minutes: 5
     steps:
-      - uses: kentaro-m/auto-assign-action@v2
+      - uses: kentaro-m/auto-assign-action@v2.0.2
         with:
           configuration-path: .github/auto-assign.yml
