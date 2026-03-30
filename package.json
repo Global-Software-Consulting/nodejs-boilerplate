@@ -21,7 +21,15 @@
     "format:check": "prettier --check .",
     "prepare": "husky",
     "release": "semantic-release",
-    "setup": "bash setup.sh"
+    "setup": "bash setup.sh",
+    "docker:temporal": "docker compose -f docker/docker-compose.temporal.yml up -d",
+    "docker:temporal:down": "docker compose -f docker/docker-compose.temporal.yml down",
+    "docker:n8n": "docker compose -f docker/docker-compose.n8n.yml up -d",
+    "docker:n8n:down": "docker compose -f docker/docker-compose.n8n.yml down",
+    "docker:node-red": "docker compose -f docker/docker-compose.node-red.yml up -d",
+    "docker:node-red:down": "docker compose -f docker/docker-compose.node-red.yml down",
+    "docker:restate": "docker compose -f docker/docker-compose.restate.yml up -d",
+    "docker:restate:down": "docker compose -f docker/docker-compose.restate.yml down"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.0.0",

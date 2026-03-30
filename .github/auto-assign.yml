@@ -1,0 +1,8 @@
+addReviewers: true
+addAssignees: author
+numberOfReviewers: 1
+reviewers:
+  - gsoft/backend-team
+skipKeywords:
+  - wip
+  - draft
