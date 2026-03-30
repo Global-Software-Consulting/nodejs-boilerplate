@@ -2,6 +2,10 @@
   - changed-files:
       - any-glob-to-any-file: 'services/backend/**'
 
+'service: frontend':
+  - changed-files:
+      - any-glob-to-any-file: 'services/frontend/**'
+
 'area: ci':
   - changed-files:
       - any-glob-to-any-file: '.github/**'
