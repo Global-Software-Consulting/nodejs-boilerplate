@@ -6,8 +6,6 @@ services:
       context: ..
       dockerfile: docker/Dockerfile
     image: node-app
-    environment:
-      - DB_ADAPTER=${DB_ADAPTER}
     ports:
       - '3000:3000'
     volumes:

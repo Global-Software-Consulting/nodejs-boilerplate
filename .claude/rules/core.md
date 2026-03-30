@@ -16,18 +16,20 @@
 ## Always
 
 - Use CommonJS (`require`/`module.exports`)
-- Follow controller → service → model architecture
+- Follow vertical slice architecture: `modules/v{N}/{feature}/` with controller → service → repository
+- Access database through repository functions (`getUserRepository()`, `getTokenRepository()`), never import DB models directly
 - Validate all request input with Joi schemas
 - Wrap async route handlers with `catchAsync`
 - Use `httpStatus` constants for HTTP status codes
 - Use `ApiError` for application errors
-- Add tests for new functionality
+- Add tests for new functionality (co-located `*.test.js` in modules)
 - Use conventional commits with appropriate scope
 
 ## Never
 
 - Use ES module syntax (`import`/`export`)
 - Put business logic in controllers
+- Import database models directly in services (use repository pattern)
 - Use `var` declarations
 - Hardcode configuration values (use env vars via `config/`)
 - Skip input validation on endpoints

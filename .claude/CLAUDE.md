@@ -3,7 +3,8 @@
 ## Tech Stack
 
 - Node.js 24 (CommonJS) with pnpm 9+ workspaces
-- Express.js + Mongoose + Passport.js (JWT auth)
+- Express.js + Passport.js (JWT auth)
+- Database-agnostic: repository pattern on main, Mongoose on `db/mongodb`, Sequelize on `db/sequelize`
 - Jest + Supertest for testing
 - ESLint 9 (flat config) + Prettier
 - GitHub Actions CI/CD + semantic-release
@@ -17,15 +18,23 @@ pnpm test             # Run all tests
 pnpm test:ci          # Tests with coverage
 pnpm lint             # ESLint
 pnpm format:check     # Prettier check
+bash setup.sh         # Interactive setup (nvm, node, pnpm, docker)
 ```
+
+## Architecture
+
+- **Vertical slices**: `src/modules/v{N}/{feature}/` — each module has controller, service, routes, validation, tests
+- **Repository pattern**: `BaseRepository` abstract interface in `src/repositories/`, lazy-loaded via `DB_ADAPTER` env
+- **Integrations**: Optional workflow engines in `src/integrations/` (Inngest, Temporal, Restate)
 
 ## Key Patterns
 
-- Controller → Service → Model layered architecture
+- Controller → Service → Repository layered architecture
 - Throw `ApiError` for errors, wrap async handlers with `catchAsync`
 - Validate all input with Joi schemas via `validate` middleware
 - JWT auth via Passport.js with role-based access (user, admin)
 - Use `httpStatus` constants, not magic numbers
+- Services use `getUserRepository()` / `getTokenRepository()` — never import DB models directly
 
 ## ECMAScript Best Practices
 
@@ -49,6 +58,10 @@ Use modern ECMAScript features (Node.js 24): destructuring, spread/rest, optiona
 
 ## Important Context
 
+- Main branch has **no database** — pure app skeleton with repository interfaces
+- DB branches (`db/mongodb`, `db/sequelize`) add adapters, models, config, and tests
 - Monorepo root has shared ESLint, Prettier, commitlint configs
 - Backend service is at `services/backend/`
 - All new endpoints need: validation → service → controller → route → tests
+- Tests are co-located in modules (`*.test.js`) and in `tests/` for shared/integration
+- CI skips test step on main (no DB_ADAPTER) — tests run on DB branches only
