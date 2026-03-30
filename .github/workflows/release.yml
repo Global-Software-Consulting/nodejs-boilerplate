@@ -1,9 +1,10 @@
+# Disabled for now — uncomment triggers to re-enable
 name: Release
 
-on:
-  push:
-    branches: [main]
-  workflow_dispatch:
+# on:
+#   push:
+#     branches: [main]
+#   workflow_dispatch:
 
 permissions:
   contents: write
@@ -13,6 +14,7 @@ permissions:
 jobs:
   release:
     name: Semantic Release
+    if: false
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
