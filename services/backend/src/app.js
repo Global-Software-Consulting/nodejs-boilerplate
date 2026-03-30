@@ -1,7 +1,6 @@
 const express = require('express');
 const helmet = require('helmet');
 const xss = require('xss-clean');
-const mongoSanitize = require('express-mongo-sanitize');
 const hpp = require('hpp');
 const compression = require('compression');
 const cors = require('cors');
@@ -34,7 +33,6 @@ app.use(express.urlencoded({ extended: true }));
 
 // sanitize request data
 app.use(xss());
-app.use(mongoSanitize());
 
 // prevent HTTP parameter pollution
 app.use(hpp());
@@ -65,6 +63,11 @@ if (CONFIG.env.NODE_ENV === 'development') {
   // eslint-disable-next-line global-require
   app.use('/v1/docs', require('./docs.route'));
 }
+
+// workflow engine integrations (conditional)
+const { loadIntegrations } = require('./integrations');
+
+loadIntegrations(app);
 
 // send back a 404 error for any unknown api request
 app.use((req, res, next) => {

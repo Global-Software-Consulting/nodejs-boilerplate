@@ -12,16 +12,25 @@ jobs:
     timeout-minutes: 5
     permissions:
       contents: write
+      pull-requests: write
     steps:
-      - name: Delete branch
+      - name: Delete branch and comment
         uses: actions/github-script@v7
         with:
           script: |
             const branch = context.payload.pull_request.head.ref;
+            const prNumber = context.payload.pull_request.number;
+            const mergedBy = context.payload.pull_request.merged_by?.login || 'unknown';
             const owner = context.repo.owner;
             const repo = context.repo.repo;
             try {
               await github.rest.git.deleteRef({ owner, repo, ref: `heads/${branch}` });
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number: prNumber,
+                body: `🧹 **Branch \`${branch}\` has been automatically deleted.**\n\nThis branch was cleaned up because PR #${prNumber} was merged by @${mergedBy}. This is handled by the [Branch Cleanup](.github/workflows/branch-cleanup.yml) workflow to keep the repository tidy.`,
+              });
               core.info(`Deleted branch: ${branch}`);
             } catch (error) {
               core.warning(`Could not delete branch ${branch}: ${error.message}`);

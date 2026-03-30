@@ -1,18 +1,16 @@
-const mongoose = require('mongoose');
-const { CONFIG } = require('../../src/config');
+const { connect, disconnect, clearAll } = require('../../src/repositories');
 
 const setupTestDB = () => {
   beforeAll(async () => {
-    const mongoUrl = CONFIG.env.MONGODB_URL + (CONFIG.env.NODE_ENV === 'test' ? '-test' : '');
-    await mongoose.connect(mongoUrl);
+    await connect();
   });
 
   beforeEach(async () => {
-    await Promise.all(Object.values(mongoose.connection.collections).map(async (collection) => collection.deleteMany()));
+    await clearAll();
   });
 
   afterAll(async () => {
-    await mongoose.disconnect();
+    await disconnect();
   });
 };
 

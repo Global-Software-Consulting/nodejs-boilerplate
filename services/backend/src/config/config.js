@@ -37,8 +37,10 @@ const envVarsSchema = Joi.object()
     NODE_ENV: Joi.string().valid('production', 'development', 'test').required(),
     PORT: Joi.number().default(3000),
 
-    // MongoDB
-    MONGODB_URL: Joi.string().required().description('MongoDB connection URL'),
+    // Database
+    DB_ADAPTER: Joi.string().required().description('Database adapter (mongoose or sequelize)'),
+    MONGODB_URL: Joi.string().allow('').default('').description('MongoDB connection URL'),
+    DATABASE_URL: Joi.string().allow('').default('').description('SQL database connection URL (for Sequelize)'),
 
     // JWT
     JWT_SECRET: Joi.string().required().description('JWT secret key'),
@@ -61,11 +63,11 @@ const envVarsSchema = Joi.object()
     // Sentry
     SENTRY_DSN: Joi.string().uri().allow('').default('').description('Sentry DSN for error tracking'),
 
-    // Twilio / WhatsApp
-    TWILIO_ACCOUNT_SID: Joi.string().allow('').default('').description('Twilio account SID'),
-    TWILIO_AUTH_TOKEN: Joi.string().allow('').default('').description('Twilio auth token'),
-    TWILIO_WHATSAPP_NUMBER: Joi.string().allow('').default('').description('Twilio WhatsApp sender number'),
-    TWILIO_WEBHOOK_BASE_URL: Joi.string().allow('').default('').description('Public base URL for Twilio webhooks'),
+    // Workflow Engines (optional)
+    INNGEST_EVENT_KEY: Joi.string().allow('').default('').description('Inngest event key'),
+    INNGEST_SIGNING_KEY: Joi.string().allow('').default('').description('Inngest signing key'),
+    TEMPORAL_ADDRESS: Joi.string().allow('').default('').description('Temporal server address'),
+    RESTATE_INGRESS_URL: Joi.string().allow('').default('').description('Restate ingress URL'),
   })
   .unknown();
 
