@@ -1,0 +1,13 @@
+services:
+  node-red:
+    image: nodered/node-red:latest
+    ports:
+      - '1880:1880'
+    environment:
+      - TZ=${NODE_RED_TZ:-UTC}
+    volumes:
+      - node-red-data:/data
+      - ./node-red/flows.json:/data/flows.json:ro
+
+volumes:
+  node-red-data:

@@ -60,6 +60,12 @@ const envVarsSchema = Joi.object()
 
     // Sentry
     SENTRY_DSN: Joi.string().uri().allow('').default('').description('Sentry DSN for error tracking'),
+
+    // Workflow Engines (optional)
+    INNGEST_EVENT_KEY: Joi.string().allow('').default('').description('Inngest event key'),
+    INNGEST_SIGNING_KEY: Joi.string().allow('').default('').description('Inngest signing key'),
+    TEMPORAL_ADDRESS: Joi.string().allow('').default('').description('Temporal server address'),
+    RESTATE_INGRESS_URL: Joi.string().allow('').default('').description('Restate ingress URL'),
   })
   .unknown();
 

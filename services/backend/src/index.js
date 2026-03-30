@@ -1,11 +1,16 @@
 const mongoose = require('mongoose');
 const app = require('./app');
 const { CONFIG, logger, sentry } = require('./config');
+const { startWorkers } = require('./integrations');
 
 let server;
 const mongoUrl = CONFIG.env.MONGODB_URL + (CONFIG.env.NODE_ENV === 'test' ? '-test' : '');
-mongoose.connect(mongoUrl).then(() => {
+mongoose.connect(mongoUrl).then(async () => {
   logger.info('Connected to MongoDB');
+
+  // Start workflow engine workers (if configured)
+  await startWorkers();
+
   server = app.listen(CONFIG.env.PORT, () => {
     logger.info(`Listening to port ${CONFIG.env.PORT}`);
   });

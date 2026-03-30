@@ -66,6 +66,11 @@ if (CONFIG.env.NODE_ENV === 'development') {
   app.use('/v1/docs', require('./docs.route'));
 }
 
+// workflow engine integrations (conditional)
+const { loadIntegrations } = require('./integrations');
+
+loadIntegrations(app);
+
 // send back a 404 error for any unknown api request
 app.use((req, res, next) => {
   next(new ApiError(httpStatus.NOT_FOUND, 'Not found'));
