@@ -1,4 +1,3 @@
-const mongoose = require('mongoose');
 const httpStatus = require('http-status').default;
 const httpMocks = require('node-mocks-http');
 const { errorConverter, errorHandler } = require('../../../src/middlewares/error');
@@ -66,8 +65,9 @@ describe('Error middlewares', () => {
       );
     });
 
-    test('should convert a Mongoose error to ApiError with status 400 and preserve its message', () => {
-      const error = new mongoose.Error('Any mongoose error');
+    test('should convert an Error with statusCode to ApiError preserving status and message', () => {
+      const error = new Error('Validation failed');
+      error.statusCode = httpStatus.UNPROCESSABLE_ENTITY;
       const next = jest.fn();
 
       errorConverter(error, httpMocks.createRequest(), httpMocks.createResponse(), next);
@@ -75,7 +75,7 @@ describe('Error middlewares', () => {
       expect(next).toHaveBeenCalledWith(expect.any(ApiError));
       expect(next).toHaveBeenCalledWith(
         expect.objectContaining({
-          statusCode: httpStatus.BAD_REQUEST,
+          statusCode: httpStatus.UNPROCESSABLE_ENTITY,
           message: error.message,
           isOperational: false,
         }),

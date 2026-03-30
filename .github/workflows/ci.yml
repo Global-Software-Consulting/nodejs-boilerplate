@@ -86,14 +86,11 @@ jobs:
     if: needs.changes.outputs.backend == 'true' || needs.changes.outputs.root == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    services:
-      mongodb:
-        image: mongo:7
-        ports:
-          - 27017:27017
     env:
       NODE_ENV: test
-      MONGODB_URL: mongodb://localhost:27017/test-db
+      DB_ADAPTER: ''
+      MONGODB_URL: ''
+      DATABASE_URL: ''
       JWT_SECRET: test-jwt-secret
       JWT_ACCESS_EXPIRATION_MINUTES: 30
       JWT_REFRESH_EXPIRATION_DAYS: 30

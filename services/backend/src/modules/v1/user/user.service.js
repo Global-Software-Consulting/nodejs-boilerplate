@@ -1,5 +1,5 @@
 const httpStatus = require('http-status').default;
-const User = require('./user.model');
+const { getUserRepository } = require('../../../repositories');
 const { ApiError } = require('../../../utils');
 
 /**
@@ -8,10 +8,10 @@ const { ApiError } = require('../../../utils');
  * @returns {Promise<User>}
  */
 const createUser = async (userBody) => {
-  if (await User.isEmailTaken(userBody.email)) {
+  if (await getUserRepository().isEmailTaken(userBody.email)) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Email already taken');
   }
-  return User.create(userBody);
+  return getUserRepository().create(userBody);
 };
 
 /**
@@ -23,24 +23,28 @@ const createUser = async (userBody) => {
  * @param {number} [options.page] - Current page (default = 1)
  * @returns {Promise<QueryResult>}
  */
-const queryUsers = async (filter, options) => {
-  const users = await User.paginate(filter, options);
-  return users;
-};
+const queryUsers = async (filter, options) => getUserRepository().paginate(filter, options);
 
 /**
  * Get user by id
  * @param {ObjectId} id
  * @returns {Promise<User>}
  */
-const getUserById = async (id) => User.findById(id);
+const getUserById = async (id) => getUserRepository().findById(id);
 
 /**
  * Get user by email
  * @param {string} email
  * @returns {Promise<User>}
  */
-const getUserByEmail = async (email) => User.findOne({ email });
+const getUserByEmail = async (email) => getUserRepository().findOne({ email });
+
+/**
+ * Get user by email with password field (for auth)
+ * @param {string} email
+ * @returns {Promise<Object>}
+ */
+const getUserByEmailForAuth = async (email) => getUserRepository().findOneRaw({ email });
 
 /**
  * Update user by id
@@ -53,12 +57,10 @@ const updateUserById = async (userId, updateBody) => {
   if (!user) {
     throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
   }
-  if (updateBody.email && (await User.isEmailTaken(updateBody.email, userId))) {
+  if (updateBody.email && (await getUserRepository().isEmailTaken(updateBody.email, userId))) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Email already taken');
   }
-  Object.assign(user, updateBody);
-  await user.save();
-  return user;
+  return getUserRepository().updateById(userId, updateBody);
 };
 
 /**
@@ -67,11 +69,10 @@ const updateUserById = async (userId, updateBody) => {
  * @returns {Promise<User>}
  */
 const deleteUserById = async (userId) => {
-  const user = await getUserById(userId);
+  const user = await getUserRepository().deleteById(userId);
   if (!user) {
     throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
   }
-  await user.remove();
   return user;
 };
 
@@ -80,6 +81,7 @@ module.exports = {
   queryUsers,
   getUserById,
   getUserByEmail,
+  getUserByEmailForAuth,
   updateUserById,
   deleteUserById,
 };
