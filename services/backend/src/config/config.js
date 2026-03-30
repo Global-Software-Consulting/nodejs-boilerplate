@@ -60,6 +60,12 @@ const envVarsSchema = Joi.object()
 
     // Sentry
     SENTRY_DSN: Joi.string().uri().allow('').default('').description('Sentry DSN for error tracking'),
+
+    // Twilio / WhatsApp
+    TWILIO_ACCOUNT_SID: Joi.string().allow('').default('').description('Twilio account SID'),
+    TWILIO_AUTH_TOKEN: Joi.string().allow('').default('').description('Twilio auth token'),
+    TWILIO_WHATSAPP_NUMBER: Joi.string().allow('').default('').description('Twilio WhatsApp sender number'),
+    TWILIO_WEBHOOK_BASE_URL: Joi.string().allow('').default('').description('Public base URL for Twilio webhooks'),
   })
   .unknown();
 
