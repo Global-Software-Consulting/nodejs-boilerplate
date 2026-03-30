@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const httpStatus = require('http-status');
+const httpStatus = require('http-status').default;
 const { CONFIG, logger, sentry } = require('../config');
 const { ApiError } = require('../utils');
 

@@ -12,7 +12,8 @@ jobs:
   label:
     name: Label PR
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
-      - uses: actions/labeler@v6
+      - uses: actions/labeler@v5
         with:
           configuration-path: .github/labeler.yml
