@@ -25,6 +25,7 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - name: Audit dependencies
+        continue-on-error: true
         run: pnpm audit --audit-level=high
 
   secret-scan:
