@@ -1,19 +1,15 @@
 const app = require('./app');
 const { CONFIG, logger, sentry } = require('./config');
-const { connect } = require('./repositories');
 const { startWorkers } = require('./integrations');
 
 let server;
-connect().then(async () => {
-  logger.info('Database connected');
 
-  // Start workflow engine workers (if configured)
+(async () => {
   await startWorkers();
-
   server = app.listen(CONFIG.env.PORT, () => {
     logger.info(`Listening to port ${CONFIG.env.PORT}`);
   });
-});
+})();
 
 const exitHandler = () => {
   if (server) {

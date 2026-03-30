@@ -1,0 +1,136 @@
+name: Test Coverage Check
+
+on:
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'services/backend/src/**'
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  check-tests:
+    name: Check for missing tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Get changed source files
+        id: src-changed
+        uses: tj-actions/changed-files@v44
+        with:
+          files: |
+            services/backend/src/modules/**/*.js
+            services/backend/src/middlewares/**/*.js
+            services/backend/src/utils/**/*.js
+
+      - name: Get changed test files
+        id: test-changed
+        uses: tj-actions/changed-files@v44
+        with:
+          files: |
+            services/backend/src/**/*.test.js
+            services/backend/tests/**/*.test.js
+            services/backend/tests/**/*.spec.js
+
+      - name: Check for missing tests
+        if: steps.src-changed.outputs.any_changed == 'true'
+        id: check
+        run: |
+          MISSING=""
+          CHECKED_MODULES=""
+          NO_TESTS_AT_ALL="${{ steps.test-changed.outputs.any_changed != 'true' }}"
+
+          for file in ${{ steps.src-changed.outputs.all_changed_files }}; do
+            basename=$(basename "$file")
+
+            # Skip test files and index.js barrels
+            if [[ "$basename" == *.test.js ]] || [[ "$basename" == "index.js" ]]; then
+              continue
+            fi
+
+            # Module files — check for co-located *.test.js
+            if [[ "$file" == services/backend/src/modules/* ]]; then
+              module_dir=$(dirname "$file")
+              if [[ "$CHECKED_MODULES" == *"$module_dir"* ]]; then
+                continue
+              fi
+              CHECKED_MODULES="$CHECKED_MODULES $module_dir"
+
+              if ! ls "$module_dir"/*.test.js &>/dev/null; then
+                relative=${module_dir#services/backend/}
+                MISSING="${MISSING}- \`${relative}/\` — no \`*.test.js\` found in module\n"
+              fi
+            fi
+
+            # Middleware files
+            if [[ "$file" == services/backend/src/middlewares/* ]]; then
+              name="${basename%.js}"
+              if ! ls services/backend/tests/unit/middlewares/${name}.test.js &>/dev/null && \
+                 ! ls services/backend/tests/unit/middlewares/${name}.spec.js &>/dev/null; then
+                MISSING="${MISSING}- \`src/middlewares/${basename}\` — no test in \`tests/unit/middlewares/\`\n"
+              fi
+            fi
+
+            # Utility files (skip plugins/)
+            if [[ "$file" == services/backend/src/utils/* ]] && [[ "$file" != */plugins/* ]]; then
+              name="${basename%.js}"
+              if ! ls services/backend/tests/unit/${name}.test.js &>/dev/null && \
+                 ! ls services/backend/tests/unit/utils/${name}.test.js &>/dev/null && \
+                 ! ls services/backend/src/utils/${name}.test.js &>/dev/null; then
+                MISSING="${MISSING}- \`src/utils/${basename}\` — no test found\n"
+              fi
+            fi
+          done
+
+          # Determine if we should comment
+          SHOULD_COMMENT=false
+          if [ -n "$MISSING" ] || [ "$NO_TESTS_AT_ALL" = "true" ]; then
+            SHOULD_COMMENT=true
+          fi
+
+          echo "should_comment=$SHOULD_COMMENT" >> "$GITHUB_OUTPUT"
+
+          # Build comment body
+          {
+            echo "body<<ENDOFBODY"
+            echo "## :warning: Missing Test Cases"
+            echo ""
+            echo "Source files were changed but test coverage may be incomplete."
+            echo ""
+
+            if [ -n "$MISSING" ]; then
+              echo "**Files/modules missing tests:**"
+              echo ""
+              echo -e "$MISSING"
+            fi
+
+            if [ "$NO_TESTS_AT_ALL" = "true" ]; then
+              echo "> **No test files were added or modified in this PR.**"
+              echo ""
+            fi
+
+            echo "<details>"
+            echo "<summary>Where should tests go?</summary>"
+            echo ""
+            echo "- **Module tests**: Co-located in \`src/modules/v{N}/{feature}/*.test.js\`"
+            echo "- **Middleware tests**: \`tests/unit/middlewares/*.test.js\`"
+            echo "- **Utility tests**: \`tests/unit/utils/*.test.js\`"
+            echo "- **Integration tests**: \`tests/integration/*.test.js\`"
+            echo ""
+            echo "</details>"
+            echo ""
+            echo "> Please add tests or confirm this change doesn't need them."
+            echo "ENDOFBODY"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Comment on PR
+        if: steps.check.outputs.should_comment == 'true'
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body: ${{ steps.check.outputs.body }}
+          reactions: eyes
