@@ -77,6 +77,7 @@ function extractSwaggerDocs(content) {
 function resolveMountPrefix(routeFilePath) {
   const moduleDir = path.dirname(routeFilePath);
   const versionDir = path.dirname(moduleDir);
+  const versionName = path.basename(versionDir);
   const indexPath = path.join(versionDir, 'index.js');
 
   if (!fs.existsSync(indexPath)) return '';
@@ -90,7 +91,9 @@ function resolveMountPrefix(routeFilePath) {
     const prefix = match[1];
     const varName = match[2];
     if (varName.toLowerCase().includes(moduleName)) {
-      return prefix;
+      // Include version prefix (e.g. /v1) if the version directory matches a version pattern
+      const versionPrefix = /^v\d+$/.test(versionName) ? `/${versionName}` : '';
+      return `${versionPrefix}${prefix}`;
     }
   }
   return '';
