@@ -1,6 +1,6 @@
 const { randomUUID } = require('crypto');
 const bcrypt = require('bcryptjs');
-const faker = require('faker');
+const { faker } = require('@faker-js/faker');
 const { getUserRepository } = require('../../src/repositories');
 
 const password = 'password1';
@@ -9,7 +9,7 @@ const hashedPassword = bcrypt.hashSync(password, salt);
 
 const userOne = {
   id: randomUUID(),
-  name: faker.name.findName(),
+  name: faker.person.fullName(),
   email: faker.internet.email().toLowerCase(),
   password,
   role: 'user',
@@ -18,7 +18,7 @@ const userOne = {
 
 const userTwo = {
   id: randomUUID(),
-  name: faker.name.findName(),
+  name: faker.person.fullName(),
   email: faker.internet.email().toLowerCase(),
   password,
   role: 'user',
@@ -27,7 +27,7 @@ const userTwo = {
 
 const admin = {
   id: randomUUID(),
-  name: faker.name.findName(),
+  name: faker.person.fullName(),
   email: faker.internet.email().toLowerCase(),
   password,
   role: 'admin',
