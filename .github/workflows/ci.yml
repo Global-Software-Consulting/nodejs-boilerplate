@@ -88,9 +88,6 @@ jobs:
     timeout-minutes: 15
     env:
       NODE_ENV: test
-      DB_ADAPTER: ''
-      MONGODB_URL: ''
-      DATABASE_URL: ''
       JWT_SECRET: test-jwt-secret
       JWT_ACCESS_EXPIRATION_MINUTES: 30
       JWT_REFRESH_EXPIRATION_DAYS: 30
@@ -136,13 +133,15 @@ jobs:
         run: pnpm --filter @gsoft/backend validate:swagger
 
       - name: Create .env for tests
+        if: env.DB_ADAPTER != ''
         run: cp services/backend/.env.example services/backend/.env
 
       - name: Run tests with coverage
+        if: env.DB_ADAPTER != ''
         run: pnpm --filter @gsoft/backend test:ci
 
       - name: Upload coverage artifact
-        if: always()
+        if: always() && env.DB_ADAPTER != ''
         uses: actions/upload-artifact@v4
         with:
           name: backend-coverage
@@ -150,7 +149,7 @@ jobs:
           retention-days: 7
 
       - name: Upload coverage to Code Climate
-        if: env.CC_TEST_REPORTER_ID != ''
+        if: env.DB_ADAPTER != '' && env.CC_TEST_REPORTER_ID != ''
         run: |
           curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
           chmod +x ./cc-test-reporter
