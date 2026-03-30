@@ -60,6 +60,13 @@ const envVarsSchema = Joi.object()
 
     // Sentry
     SENTRY_DSN: Joi.string().uri().allow('').default('').description('Sentry DSN for error tracking'),
+
+    // Twilio
+    TWILIO_ACCOUNT_SID: Joi.string().allow('').default('').description('Twilio account SID'),
+    TWILIO_AUTH_TOKEN: Joi.string().allow('').default('').description('Twilio auth token'),
+    TWILIO_PHONE_NUMBER: Joi.string().allow('').default('').description('Twilio phone number'),
+    TWILIO_VERIFY_SERVICE_SID: Joi.string().allow('').default('').description('Twilio Verify service SID'),
+    TWILIO_WEBHOOK_URL: Joi.string().allow('').default('').description('Public URL for Twilio webhooks'),
   })
   .unknown();
 

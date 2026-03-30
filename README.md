@@ -183,6 +183,11 @@ The app validates that `.env` and `.env.example` have matching keys on startup u
 | `SMTP_PASSWORD`                         | SMTP password                                     | —       |
 | `EMAIL_FROM`                            | Sender email address                              | —       |
 | `SENTRY_DSN`                            | Sentry DSN for error tracking                     | —       |
+| `TWILIO_ACCOUNT_SID`                    | Twilio account SID                                | —       |
+| `TWILIO_AUTH_TOKEN`                     | Twilio auth token                                 | —       |
+| `TWILIO_PHONE_NUMBER`                   | Twilio phone number (E.164)                       | —       |
+| `TWILIO_VERIFY_SERVICE_SID`             | Twilio Verify service SID                         | —       |
+| `TWILIO_WEBHOOK_URL`                    | Public URL for Twilio webhooks                    | —       |
 
 ### Frontend (`services/frontend/.env`)
 
@@ -214,6 +219,32 @@ The app validates that `.env` and `.env.example` have matching keys on startup u
 | GET    | `/v1/users/:userId` | Get user               | Owner or admin |
 | PATCH  | `/v1/users/:userId` | Update user            | Owner or admin |
 | DELETE | `/v1/users/:userId` | Delete user            | Owner or admin |
+
+### Twilio SMS & Calls (`/v1/twilio`)
+
+| Method | Endpoint                             | Description             | Auth              |
+| ------ | ------------------------------------ | ----------------------- | ----------------- |
+| POST   | `/v1/twilio/sms/send`                | Send an SMS             | `manageSms`       |
+| POST   | `/v1/twilio/sms/send-bulk`           | Send bulk SMS           | `manageSms`       |
+| GET    | `/v1/twilio/sms`                     | List SMS messages       | `manageSms`       |
+| GET    | `/v1/twilio/sms/:messageId`          | Get SMS message         | `manageSms`       |
+| POST   | `/v1/twilio/calls/make`              | Make a phone call       | `manageCalls`     |
+| GET    | `/v1/twilio/calls`                   | List calls              | `manageCalls`     |
+| GET    | `/v1/twilio/calls/:callId`           | Get call                | `manageCalls`     |
+| POST   | `/v1/twilio/verify/send`             | Send verification code  | Any authenticated |
+| POST   | `/v1/twilio/verify/check`            | Check verification code | Any authenticated |
+| POST   | `/v1/twilio/webhooks/sms/incoming`   | Incoming SMS webhook    | Twilio signature  |
+| POST   | `/v1/twilio/webhooks/sms/status`     | SMS status webhook      | Twilio signature  |
+| POST   | `/v1/twilio/webhooks/calls/status`   | Call status webhook     | Twilio signature  |
+| POST   | `/v1/twilio/webhooks/calls/incoming` | Incoming call webhook   | Twilio signature  |
+
+**Webhook Setup:**
+
+```bash
+# Local development with ngrok
+ngrok http 3000
+# Set TWILIO_WEBHOOK_URL to the ngrok URL
+```
 
 ### API Docs
 
