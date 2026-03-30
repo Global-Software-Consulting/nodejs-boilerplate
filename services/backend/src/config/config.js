@@ -60,6 +60,11 @@ const envVarsSchema = Joi.object()
 
     // Sentry
     SENTRY_DSN: Joi.string().uri().allow('').default('').description('Sentry DSN for error tracking'),
+
+    // Stripe
+    STRIPE_SECRET_KEY: Joi.string().allow('').default('').description('Stripe secret key'),
+    STRIPE_WEBHOOK_SECRET: Joi.string().allow('').default('').description('Stripe webhook secret'),
+    STRIPE_PUBLISHABLE_KEY: Joi.string().allow('').default('').description('Stripe publishable key'),
   })
   .unknown();
 

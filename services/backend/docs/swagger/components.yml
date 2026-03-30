@@ -39,6 +39,67 @@ components:
         refresh:
           $ref: '#/components/schemas/Token'
 
+    Payment:
+      type: object
+      properties:
+        id:
+          type: string
+        user:
+          type: string
+        stripePaymentIntentId:
+          type: string
+        type:
+          type: string
+          enum: [one_time, checkout]
+        status:
+          type: string
+        amount:
+          type: number
+        currency:
+          type: string
+        description:
+          type: string
+        refundedAmount:
+          type: number
+
+    Subscription:
+      type: object
+      properties:
+        id:
+          type: string
+        user:
+          type: string
+        stripeSubscriptionId:
+          type: string
+        stripePriceId:
+          type: string
+        status:
+          type: string
+        currentPeriodStart:
+          type: string
+          format: date-time
+        currentPeriodEnd:
+          type: string
+          format: date-time
+        cancelAtPeriodEnd:
+          type: boolean
+
+    CheckoutSession:
+      type: object
+      properties:
+        id:
+          type: string
+        url:
+          type: string
+
+    PortalSession:
+      type: object
+      properties:
+        id:
+          type: string
+        url:
+          type: string
+
     Error:
       type: object
       properties:

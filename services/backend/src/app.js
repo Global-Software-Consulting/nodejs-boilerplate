@@ -26,6 +26,9 @@ if (CONFIG.env.NODE_ENV !== 'test') {
 // set security HTTP headers
 app.use(helmet());
 
+// raw body for Stripe webhook (must be before express.json)
+app.use('/v1/stripe/webhook', express.raw({ type: 'application/json' }));
+
 // parse json request body
 app.use(express.json());
 
