@@ -1,5 +1,5 @@
 const Joi = require('joi');
-const httpStatus = require('http-status');
+const httpStatus = require('http-status').default;
 const { pick, ApiError } = require('../utils');
 
 const validate = (schema) => (req, res, next) => {

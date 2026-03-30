@@ -1,4 +1,4 @@
-const httpStatus = require('http-status');
+const httpStatus = require('http-status').default;
 const User = require('./user.model');
 const { ApiError } = require('../../../utils');
 
