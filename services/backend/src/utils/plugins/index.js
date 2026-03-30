@@ -1,2 +1,2 @@
-module.exports.toJSON = require('./toJSON.plugin');
-module.exports.paginate = require('./paginate.plugin');
+// Plugins are provided by the database adapter (e.g., mongoose/sequelize).
+// This file is intentionally empty on the base branch.

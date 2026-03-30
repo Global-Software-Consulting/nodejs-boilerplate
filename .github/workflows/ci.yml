@@ -12,6 +12,7 @@ concurrency:
 
 permissions:
   contents: read
+  pull-requests: write
 
 jobs:
   changes:
@@ -24,6 +25,9 @@ jobs:
       backend: ${{ steps.filter.outputs.backend }}
       frontend: ${{ steps.filter.outputs.frontend }}
       root: ${{ steps.filter.outputs.root }}
+      backend_src: ${{ steps.changed.outputs.backend_src_any_changed }}
+      backend_tests: ${{ steps.changed.outputs.backend_tests_any_changed }}
+      frontend_src: ${{ steps.changed.outputs.frontend_src_any_changed }}
     steps:
       - uses: actions/checkout@v4
       - uses: dorny/paths-filter@v3
@@ -46,6 +50,18 @@ jobs:
               - '.node-version'
               - '.npmrc'
               - '.releaserc.json'
+
+      - name: Get changed files
+        id: changed
+        uses: tj-actions/changed-files@v44
+        with:
+          files_yaml: |
+            backend_src:
+              - 'services/backend/src/**'
+            backend_tests:
+              - 'services/backend/tests/**'
+            frontend_src:
+              - 'services/frontend/src/**'
 
   lint-root:
     name: Lint root configs
@@ -70,14 +86,11 @@ jobs:
     if: needs.changes.outputs.backend == 'true' || needs.changes.outputs.root == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    services:
-      mongodb:
-        image: mongo:7
-        ports:
-          - 27017:27017
     env:
       NODE_ENV: test
-      MONGODB_URL: mongodb://localhost:27017/test-db
+      DB_ADAPTER: ''
+      MONGODB_URL: ''
+      DATABASE_URL: ''
       JWT_SECRET: test-jwt-secret
       JWT_ACCESS_EXPIRATION_MINUTES: 30
       JWT_REFRESH_EXPIRATION_DAYS: 30
@@ -100,6 +113,10 @@ jobs:
       TWILIO_WEBHOOK_URL: ''
       TWILIO_WHATSAPP_NUMBER: ''
       TWILIO_WEBHOOK_BASE_URL: ''
+      INNGEST_EVENT_KEY: ''
+      INNGEST_SIGNING_KEY: ''
+      TEMPORAL_ADDRESS: ''
+      RESTATE_INGRESS_URL: ''
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -114,6 +131,9 @@ jobs:
 
       - name: Format check
         run: pnpm --filter @gsoft/backend format:check
+
+      - name: Validate Swagger documentation
+        run: pnpm --filter @gsoft/backend validate:swagger
 
       - name: Create .env for tests
         run: cp services/backend/.env.example services/backend/.env
@@ -175,3 +195,45 @@ jobs:
             exit 1
           fi
           echo "All jobs passed or were skipped"
+
+  pr-comment:
+    name: PR Coverage Comment
+    if: always() && github.event_name == 'pull_request'
+    needs: [backend, ci-success]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Download coverage artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: backend-coverage
+          path: coverage/
+        continue-on-error: true
+
+      - name: Parse coverage
+        id: coverage
+        run: |
+          if [ -f coverage/coverage-summary.json ]; then
+            TOTAL=$(node -e "const c=require('./coverage/coverage-summary.json');console.log(c.total.lines.pct)")
+            echo "percentage=$TOTAL" >> "$GITHUB_OUTPUT"
+            echo "found=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "percentage=N/A" >> "$GITHUB_OUTPUT"
+            echo "found=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Comment on PR
+        if: steps.coverage.outputs.found == 'true'
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            ## Coverage Report
+
+            | Metric | Value |
+            |--------|-------|
+            | Lines | ${{ steps.coverage.outputs.percentage }}% |
+
+            > Updated for commit ${{ github.sha }}

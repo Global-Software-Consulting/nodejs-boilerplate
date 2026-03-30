@@ -4,7 +4,7 @@ const moment = require('moment');
 const httpStatus = require('http-status').default;
 const { CONFIG, tokenTypes } = require('../../../config');
 const userService = require('../user/user.service');
-const Token = require('./token.model');
+const { getTokenRepository } = require('../../../repositories');
 const { ApiError } = require('../../../utils');
 
 /**
@@ -37,8 +37,8 @@ const generateToken = (userId, expires, type, secret = CONFIG.env.JWT_SECRET) =>
  * @param {Object} [meta] - Optional metadata { jti, ip, userAgent }
  * @returns {Promise<Token>}
  */
-const saveToken = async (token, userId, expires, type, blacklisted = false, meta = {}) => {
-  const tokenDoc = await Token.create({
+const saveToken = async (token, userId, expires, type, blacklisted = false, meta = {}) =>
+  getTokenRepository().create({
     token,
     user: userId,
     expires: expires.toDate(),
@@ -46,8 +46,6 @@ const saveToken = async (token, userId, expires, type, blacklisted = false, meta
     blacklisted,
     ...meta,
   });
-  return tokenDoc;
-};
 
 /**
  * Verify token and return token doc (or throw an error if it is not valid)
@@ -57,7 +55,7 @@ const saveToken = async (token, userId, expires, type, blacklisted = false, meta
  */
 const verifyToken = async (token, type) => {
   const payload = jwt.verify(token, CONFIG.env.JWT_SECRET);
-  const tokenDoc = await Token.findOne({ token, type, user: payload.sub, blacklisted: false });
+  const tokenDoc = await getTokenRepository().findOne({ token, type, user: payload.sub, blacklisted: false });
   if (!tokenDoc) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Token not found');
   }

@@ -35,6 +35,25 @@ updates:
       - 'service: backend'
     open-pull-requests-limit: 10
 
+  - package-ecosystem: npm
+    directory: /services/frontend
+    schedule:
+      interval: weekly
+      day: monday
+    commit-message:
+      prefix: 'chore(deps):'
+    groups:
+      frontend-minor:
+        update-types:
+          - minor
+          - patch
+        patterns:
+          - '*'
+    labels:
+      - dependencies
+      - 'service: frontend'
+    open-pull-requests-limit: 10
+
   - package-ecosystem: github-actions
     directory: /
     schedule:

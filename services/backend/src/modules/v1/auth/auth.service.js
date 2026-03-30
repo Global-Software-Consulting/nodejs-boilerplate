@@ -1,8 +1,9 @@
 const httpStatus = require('http-status').default;
 const tokenService = require('./token.service');
 const userService = require('../user/user.service');
-const Token = require('./token.model');
+const { getTokenRepository } = require('../../../repositories');
 const { ApiError } = require('../../../utils');
+const { comparePassword } = require('../../../utils/password');
 const { tokenTypes } = require('../../../config');
 
 /**
@@ -12,11 +13,11 @@ const { tokenTypes } = require('../../../config');
  * @returns {Promise<User>}
  */
 const loginUserWithEmailAndPassword = async (email, password) => {
-  const user = await userService.getUserByEmail(email);
-  if (!user || !(await user.isPasswordMatch(password))) {
+  const rawUser = await userService.getUserByEmailForAuth(email);
+  if (!rawUser || !(await comparePassword(password, rawUser.password))) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Incorrect email or password');
   }
-  return user;
+  return userService.getUserById(rawUser.id);
 };
 
 /**
@@ -25,11 +26,15 @@ const loginUserWithEmailAndPassword = async (email, password) => {
  * @returns {Promise}
  */
 const logout = async (refreshToken) => {
-  const refreshTokenDoc = await Token.findOne({ token: refreshToken, type: tokenTypes.REFRESH, blacklisted: false });
+  const refreshTokenDoc = await getTokenRepository().findOne({
+    token: refreshToken,
+    type: tokenTypes.REFRESH,
+    blacklisted: false,
+  });
   if (!refreshTokenDoc) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Not found');
   }
-  await refreshTokenDoc.remove();
+  await getTokenRepository().deleteById(refreshTokenDoc.id);
 };
 
 /**
@@ -44,7 +49,7 @@ const refreshAuth = async (refreshToken) => {
     if (!user) {
       throw new Error();
     }
-    await refreshTokenDoc.remove();
+    await getTokenRepository().deleteById(refreshTokenDoc.id);
     return tokenService.generateAuthTokens(user);
   } catch (error) {
     // Reuse detection: if the token is valid JWT but already deleted from DB,
@@ -53,7 +58,7 @@ const refreshAuth = async (refreshToken) => {
       try {
         const decoded = tokenService.decodeToken(refreshToken);
         if (decoded?.sub) {
-          await Token.updateMany({ user: decoded.sub, type: tokenTypes.REFRESH }, { blacklisted: true });
+          await getTokenRepository().updateMany({ user: decoded.sub, type: tokenTypes.REFRESH }, { blacklisted: true });
         }
       } catch {
         // ignore decode failures
@@ -77,7 +82,7 @@ const resetPassword = async (resetPasswordToken, newPassword) => {
       throw new Error();
     }
     await userService.updateUserById(user.id, { password: newPassword });
-    await Token.deleteMany({ user: user.id, type: tokenTypes.RESET_PASSWORD });
+    await getTokenRepository().deleteMany({ user: user.id, type: tokenTypes.RESET_PASSWORD });
   } catch (_error) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Password reset failed');
   }
@@ -95,7 +100,7 @@ const verifyEmail = async (verifyEmailToken) => {
     if (!user) {
       throw new Error();
     }
-    await Token.deleteMany({ user: user.id, type: tokenTypes.VERIFY_EMAIL });
+    await getTokenRepository().deleteMany({ user: user.id, type: tokenTypes.VERIFY_EMAIL });
     await userService.updateUserById(user.id, { isEmailVerified: true });
   } catch (_error) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Email verification failed');
