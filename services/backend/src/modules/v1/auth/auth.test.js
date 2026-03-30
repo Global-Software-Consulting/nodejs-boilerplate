@@ -274,7 +274,7 @@ describe('Auth routes', () => {
         .send({ password: 'password2' })
         .expect(httpStatus.NO_CONTENT);
 
-      const dbUser = await getUserRepository().findById(userOne.id);
+      const dbUser = await getUserRepository().findOneRaw({ _id: userOne.id });
       const isPasswordMatch = await bcrypt.compare('password2', dbUser.password);
       expect(isPasswordMatch).toBe(true);
 

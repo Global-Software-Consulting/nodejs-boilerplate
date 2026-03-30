@@ -1,4 +1,4 @@
-const { randomUUID } = require('crypto');
+const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const { faker } = require('@faker-js/faker');
 const { getUserRepository } = require('../../src/repositories');
@@ -8,7 +8,7 @@ const salt = bcrypt.genSaltSync(8);
 const hashedPassword = bcrypt.hashSync(password, salt);
 
 const userOne = {
-  id: randomUUID(),
+  id: new mongoose.Types.ObjectId().toHexString(),
   name: faker.person.fullName(),
   email: faker.internet.email().toLowerCase(),
   password,
@@ -17,7 +17,7 @@ const userOne = {
 };
 
 const userTwo = {
-  id: randomUUID(),
+  id: new mongoose.Types.ObjectId().toHexString(),
   name: faker.person.fullName(),
   email: faker.internet.email().toLowerCase(),
   password,
@@ -26,7 +26,7 @@ const userTwo = {
 };
 
 const admin = {
-  id: randomUUID(),
+  id: new mongoose.Types.ObjectId().toHexString(),
   name: faker.person.fullName(),
   email: faker.internet.email().toLowerCase(),
   password,
