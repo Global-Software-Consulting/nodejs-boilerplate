@@ -135,6 +135,9 @@ jobs:
       - name: Format check
         run: pnpm --filter @gsoft/backend format:check
 
+      - name: Validate Swagger documentation
+        run: pnpm --filter @gsoft/backend validate:swagger
+
       - name: Create .env for tests
         run: cp services/backend/.env.example services/backend/.env
 
