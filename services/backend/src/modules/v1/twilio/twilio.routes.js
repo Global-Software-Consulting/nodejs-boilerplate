@@ -20,7 +20,7 @@ const router = express.Router();
 // SMS routes
 /**
  * @swagger
- * /v1/twilio/sms/send:
+ * /twilio/sms/send:
  *   post:
  *     summary: Send an SMS
  *     tags: [Twilio]
@@ -36,7 +36,7 @@ router.post('/sms/send', auth('manageSms'), validate(smsValidation.sendSms), sms
 
 /**
  * @swagger
- * /v1/twilio/sms/send-bulk:
+ * /twilio/sms/send-bulk:
  *   post:
  *     summary: Send bulk SMS
  *     tags: [Twilio]
@@ -52,7 +52,7 @@ router.post('/sms/send-bulk', auth('manageSms'), validate(smsValidation.sendBulk
 
 /**
  * @swagger
- * /v1/twilio/sms:
+ * /twilio/sms:
  *   get:
  *     summary: List SMS messages
  *     tags: [Twilio]
@@ -89,7 +89,7 @@ router.get('/sms', auth('manageSms'), validate(smsValidation.getMessages), smsCo
 
 /**
  * @swagger
- * /v1/twilio/sms/{messageId}:
+ * /twilio/sms/{messageId}:
  *   get:
  *     summary: Get an SMS message
  *     tags: [Twilio]
@@ -114,7 +114,7 @@ router.get('/sms/:messageId', auth('manageSms'), validate(smsValidation.getMessa
 // Call routes
 /**
  * @swagger
- * /v1/twilio/calls/make:
+ * /twilio/calls/make:
  *   post:
  *     summary: Make a phone call
  *     tags: [Twilio]
@@ -130,7 +130,7 @@ router.post('/calls/make', auth('manageCalls'), validate(callValidation.makeCall
 
 /**
  * @swagger
- * /v1/twilio/calls:
+ * /twilio/calls:
  *   get:
  *     summary: List calls
  *     tags: [Twilio]
@@ -167,7 +167,7 @@ router.get('/calls', auth('manageCalls'), validate(callValidation.getCalls), cal
 
 /**
  * @swagger
- * /v1/twilio/calls/{callId}:
+ * /twilio/calls/{callId}:
  *   get:
  *     summary: Get a call
  *     tags: [Twilio]
@@ -192,7 +192,7 @@ router.get('/calls/:callId', auth('manageCalls'), validate(callValidation.getCal
 // Verification routes
 /**
  * @swagger
- * /v1/twilio/verify/send:
+ * /twilio/verify/send:
  *   post:
  *     summary: Send verification code
  *     tags: [Twilio]
@@ -208,7 +208,7 @@ router.post('/verify/send', auth(), validate(verificationValidation.sendCode), v
 
 /**
  * @swagger
- * /v1/twilio/verify/check:
+ * /twilio/verify/check:
  *   post:
  *     summary: Check verification code
  *     tags: [Twilio]
@@ -225,7 +225,7 @@ router.post('/verify/check', auth(), validate(verificationValidation.verifyCode)
 // Webhook routes (Twilio signature validation)
 /**
  * @swagger
- * /v1/twilio/webhooks/sms/incoming:
+ * /twilio/webhooks/sms/incoming:
  *   post:
  *     summary: Incoming SMS webhook
  *     tags: [Twilio]
@@ -237,7 +237,7 @@ router.post('/webhooks/sms/incoming', validateTwilioSignature, webhookController
 
 /**
  * @swagger
- * /v1/twilio/webhooks/sms/status:
+ * /twilio/webhooks/sms/status:
  *   post:
  *     summary: SMS status callback webhook
  *     tags: [Twilio]
@@ -249,7 +249,7 @@ router.post('/webhooks/sms/status', validateTwilioSignature, webhookController.h
 
 /**
  * @swagger
- * /v1/twilio/webhooks/calls/status:
+ * /twilio/webhooks/calls/status:
  *   post:
  *     summary: Call status callback webhook
  *     tags: [Twilio]
@@ -261,7 +261,7 @@ router.post('/webhooks/calls/status', validateTwilioSignature, webhookController
 
 /**
  * @swagger
- * /v1/twilio/webhooks/calls/incoming:
+ * /twilio/webhooks/calls/incoming:
  *   post:
  *     summary: Incoming call webhook
  *     tags: [Twilio]
