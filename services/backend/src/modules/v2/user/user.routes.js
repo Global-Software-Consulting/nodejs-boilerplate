@@ -27,7 +27,7 @@ module.exports = router;
 
 /**
  * @swagger
- * /users:
+ * /v2/users:
  *   post:
  *     summary: Create a user
  *     description: Only admins can create other users.
@@ -147,7 +147,7 @@ module.exports = router;
 
 /**
  * @swagger
- * /users/{id}:
+ * /v2/users/{id}:
  *   get:
  *     summary: Get a user
  *     description: Logged in users can fetch only their own user information. Only admins can fetch other users.
