@@ -11,6 +11,8 @@
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "dev": "pnpm --filter @gsoft/backend dev",
+    "dev:frontend": "pnpm --filter @gsoft/frontend dev",
+    "dev:all": "pnpm -r dev",
     "test": "pnpm -r test",
     "test:ci": "pnpm -r test:ci",
     "lint": "eslint .",
@@ -18,16 +20,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "prepare": "husky",
-    "release": "semantic-release"
-  },
-  "lint-staged": {
-    "*.js": [
-      "eslint --fix",
-      "prettier --write"
-    ],
-    "*.{json,md,yml,yaml}": [
-      "prettier --write"
-    ]
+    "release": "semantic-release",
+    "setup": "bash setup.sh"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.0.0",
@@ -41,6 +35,7 @@
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-import": "^2.29.0",
     "eslint-plugin-jest": "^28.0.0",
+    "eslint-plugin-n": "^17.0.0",
     "eslint-plugin-security": "^3.0.0",
     "globals": "^15.0.0",
     "husky": "^9.0.0",

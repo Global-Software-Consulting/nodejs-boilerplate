@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const httpStatus = require('http-status');
-const { CONFIG, logger } = require('../config');
-const ApiError = require('../utils/ApiError');
+const { CONFIG, logger, sentry } = require('../config');
+const { ApiError } = require('../utils');
 
 const errorConverter = (err, req, res, next) => {
   let error = err;
@@ -20,6 +20,11 @@ const errorHandler = (err, req, res, next) => {
   if (CONFIG.env.NODE_ENV === 'production' && !err.isOperational) {
     statusCode = httpStatus.INTERNAL_SERVER_ERROR;
     message = httpStatus[httpStatus.INTERNAL_SERVER_ERROR];
+  }
+
+  // Report 5xx server errors to Sentry (skip client errors)
+  if (statusCode >= 500) {
+    sentry.captureException(err);
   }
 
   res.locals.errorMessage = err.message;

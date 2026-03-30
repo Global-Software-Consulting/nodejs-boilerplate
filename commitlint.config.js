@@ -2,7 +2,7 @@ module.exports = {
   extends: ['@commitlint/config-conventional'],
   rules: {
     'type-enum': [2, 'always', ['wip', 'feat', 'fix', 'style', 'refactor', 'test', 'docs', 'chore', 'hotfix']],
-    'scope-enum': [2, 'always', ['backend', 'root', 'ci', 'deps', 'release']],
+    'scope-enum': [2, 'always', ['backend', 'frontend', 'root', 'ci', 'deps', 'release']],
     'subject-empty': [2, 'never'],
     'subject-min-length': [2, 'always', 10],
     'subject-max-length': [2, 'always', 100],

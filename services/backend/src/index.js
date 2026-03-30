@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const app = require('./app');
-const { CONFIG, logger } = require('./config');
+const { CONFIG, logger, sentry } = require('./config');
 
 let server;
 const mongoUrl = CONFIG.env.MONGODB_URL + (CONFIG.env.NODE_ENV === 'test' ? '-test' : '');
@@ -24,6 +24,7 @@ const exitHandler = () => {
 
 const unexpectedErrorHandler = (error) => {
   logger.error(error);
+  sentry.captureException(error);
   exitHandler();
 };
 

@@ -74,6 +74,7 @@ jobs:
       JWT_ACCESS_EXPIRATION_MINUTES: 30
       JWT_REFRESH_EXPIRATION_DAYS: 30
       PORT: 3000
+      SENTRY_DSN: ''
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -86,7 +87,23 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter @gsoft/backend lint
       - run: pnpm --filter @gsoft/backend format:check
+
+      - name: Setup Code Climate reporter
+        if: env.CC_TEST_REPORTER_ID != ''
+        run: |
+          curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+          chmod +x ./cc-test-reporter
+          ./cc-test-reporter before-build
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+
       - run: pnpm --filter @gsoft/backend test:ci
+
+      - name: Upload coverage to Code Climate
+        if: env.CC_TEST_REPORTER_ID != ''
+        run: ./cc-test-reporter after-build --exit-code $?
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
 
   ci-success:
     name: CI Success

@@ -2,6 +2,7 @@ const { FlatCompat } = require('@eslint/eslintrc');
 const js = require('@eslint/js');
 const globals = require('globals');
 const security = require('eslint-plugin-security');
+const nodePlugin = require('eslint-plugin-n');
 
 const compat = new FlatCompat({
   baseDirectory: __dirname,
@@ -11,7 +12,7 @@ const compat = new FlatCompat({
 module.exports = [
   // Global ignores
   {
-    ignores: ['**/node_modules/**', '**/dist/**', '**/coverage/**', '**/build/**'],
+    ignores: ['**/node_modules/**', '**/dist/**', '**/coverage/**', '**/build/**', '**/.next/**', 'services/frontend/**'],
   },
 
   // Base config for all JS files
@@ -22,6 +23,9 @@ module.exports = [
 
   // Security plugin (native flat config)
   security.configs.recommended,
+
+  // Node.js recommended rules
+  nodePlugin.configs['flat/recommended-script'],
 
   // Prettier must be last to disable conflicting rules
   ...compat.extends('prettier'),
@@ -43,6 +47,12 @@ module.exports = [
       'no-underscore-dangle': 'off',
       'consistent-return': 'off',
       'security/detect-object-injection': 'off',
+
+      // Node.js rules
+      'n/no-process-exit': 'warn',
+      'n/no-unsupported-features/es-syntax': 'off',
+      'n/no-missing-require': 'off',
+      'n/no-unpublished-require': 'off',
     },
   },
 
@@ -54,7 +64,7 @@ module.exports = [
     },
   },
 
-  // Jest config for test files only
+  // Jest rules for test files
   ...compat.extends('plugin:jest/recommended').map((config) => ({
     ...config,
     files: ['**/tests/**/*.js', '**/*.test.js', '**/*.spec.js'],
