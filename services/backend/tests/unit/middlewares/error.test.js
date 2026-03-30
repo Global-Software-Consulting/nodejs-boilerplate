@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const httpStatus = require('http-status');
+const httpStatus = require('http-status').default;
 const httpMocks = require('node-mocks-http');
 const { errorConverter, errorHandler } = require('../../../src/middlewares/error');
 const ApiError = require('../../../src/utils/ApiError');

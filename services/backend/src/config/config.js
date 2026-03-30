@@ -52,11 +52,11 @@ const envVarsSchema = Joi.object()
       .description('minutes after which verify email token expires'),
 
     // SMTP
-    SMTP_HOST: Joi.string().description('SMTP server host'),
+    SMTP_HOST: Joi.string().allow('').default('').description('SMTP server host'),
     SMTP_PORT: Joi.number().description('SMTP server port'),
-    SMTP_USERNAME: Joi.string().description('SMTP server username'),
-    SMTP_PASSWORD: Joi.string().description('SMTP server password'),
-    EMAIL_FROM: Joi.string().description('sender address for outgoing emails'),
+    SMTP_USERNAME: Joi.string().allow('').default('').description('SMTP server username'),
+    SMTP_PASSWORD: Joi.string().allow('').default('').description('SMTP server password'),
+    EMAIL_FROM: Joi.string().allow('').default('').description('sender address for outgoing emails'),
 
     // Sentry
     SENTRY_DSN: Joi.string().uri().allow('').default('').description('Sentry DSN for error tracking'),
