@@ -1,4 +1,4 @@
-const httpStatus = require('http-status');
+const httpStatus = require('http-status').default;
 const tokenService = require('./token.service');
 const userService = require('../user/user.service');
 const Token = require('./token.model');

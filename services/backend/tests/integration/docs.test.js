@@ -1,5 +1,5 @@
 const request = require('supertest');
-const httpStatus = require('http-status');
+const httpStatus = require('http-status').default;
 const app = require('../../src/app');
 const { CONFIG } = require('../../src/config');
 
