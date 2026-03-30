@@ -2,9 +2,12 @@
 
 ## Structure
 
-- Tests live in `services/backend/tests/`
-- Integration tests use Supertest against the Express app
-- Unit tests for services and utilities
+- Co-located tests in modules: `src/modules/v{N}/{feature}/*.test.js`
+- Integration tests in `tests/integration/`
+- Unit tests in `tests/unit/`
+- Test fixtures in `tests/fixtures/` (user, token factories)
+- Test utilities in `tests/utils/` (setupTestDB)
+- Tests only run on DB branches (`db/mongodb`, `db/sequelize`) — main has no database
 
 ## Commands
 
@@ -22,3 +25,4 @@ pnpm --filter @gsoft/backend test:watch  # Watch mode
 - Test authentication and authorization separately
 - Verify response status codes and body structure
 - Clean up test data between tests (no shared state)
+- Use repository pattern in tests — access data through `getUserRepository()` / `getTokenRepository()`
