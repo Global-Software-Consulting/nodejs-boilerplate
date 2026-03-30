@@ -2,9 +2,9 @@ const Stripe = require('stripe');
 const httpStatus = require('http-status');
 const { CONFIG } = require('../../../config');
 const { ApiError } = require('../../../utils');
+const { getUserRepository } = require('../../../repositories');
 const Payment = require('./payment.model');
 const Subscription = require('./subscription.model');
-const User = require('../user/user.model');
 
 const stripe = new Stripe(CONFIG.env.STRIPE_SECRET_KEY);
 
@@ -14,7 +14,7 @@ const createCustomer = async (user) => {
     name: user.name,
     metadata: { userId: user.id },
   });
-  await User.findByIdAndUpdate(user.id, { stripeCustomerId: customer.id });
+  await getUserRepository().updateById(user.id, { stripeCustomerId: customer.id });
   return customer;
 };
 
@@ -37,7 +37,7 @@ const deleteCustomer = async (user) => {
     throw new ApiError(httpStatus.BAD_REQUEST, 'No Stripe customer found for this user');
   }
   await stripe.customers.del(user.stripeCustomerId);
-  await User.findByIdAndUpdate(user.id, { $unset: { stripeCustomerId: 1 } });
+  await getUserRepository().updateById(user.id, { stripeCustomerId: null });
 };
 
 const createPaymentIntent = async (user, { amount, currency, description, metadata }) => {
