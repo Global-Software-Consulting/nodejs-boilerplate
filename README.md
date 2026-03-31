@@ -24,11 +24,11 @@ pnpm install
 cp services/backend/.env.example services/backend/.env
 cp services/frontend/.env.example services/frontend/.env
 
-# 3. Start backend with Docker (MongoDB included)
+# 3. Start backend with Docker (PostgreSQL by default)
 docker compose -f services/backend/docker/docker-compose.yml \
                -f services/backend/docker/docker-compose.dev.yml up
 
-# Or start without Docker (requires local MongoDB)
+# Or start without Docker (requires local database)
 pnpm dev
 
 # 4. Start frontend
@@ -39,7 +39,7 @@ pnpm dev:frontend
 
 - Node.js >= 24
 - pnpm >= 9
-- Docker (for backend with MongoDB)
+- Docker (for backend with PostgreSQL or MongoDB)
 
 ## Project Structure
 
@@ -91,7 +91,7 @@ pnpm dev:frontend
 │       │   │   └── v2/         # API v2
 │       │   ├── utils/          # ApiError, catchAsync, pick, customValidation, plugins
 │       │   ├── app.js          # Express app setup & middleware chain
-│       │   └── index.js        # Entry point, MongoDB connection, signal handlers
+│       │   └── index.js        # Entry point, database connection, signal handlers
 │       ├── tests/
 │       │   ├── fixtures/       # Test data factories
 │       │   ├── integration/    # Supertest integration tests
@@ -101,7 +101,7 @@ pnpm dev:frontend
 │       │   └── swagger/        # Swagger definitions & components
 │       ├── docker/
 │       │   ├── Dockerfile                  # Multi-stage (node:24-alpine)
-│       │   ├── docker-compose.yml          # Base (app + MongoDB)
+│       │   ├── docker-compose.yml          # Base (app + database)
 │       │   ├── docker-compose.dev.yml      # Development overlay
 │       │   ├── docker-compose.prod.yml     # Production overlay
 │       │   └── docker-compose.test.yml     # Test overlay
@@ -151,15 +151,15 @@ pnpm --filter @gsoft/backend test:ci      # Tests with coverage
 
 ```bash
 # From services/backend/
-pnpm docker:dev       # Development (hot reload + MongoDB)
-pnpm docker:prod      # Production (PM2 + MongoDB)
+pnpm docker:dev       # Development (hot reload + database)
+pnpm docker:prod      # Production (PM2 + database)
 pnpm docker:test      # Run tests in container
 ```
 
 Docker Compose runs:
 
 - **node-app** — `node:24-alpine`, exposes port 3000, mounts source for hot reload (dev)
-- **mongodb** — `mongo:4.2.1-bionic`, exposes port 27017, persistent volume `dbdata`
+- **database** — PostgreSQL (default) or MongoDB depending on `DB_ADAPTER`, persistent volume
 
 ## Environment Variables
 
@@ -171,7 +171,9 @@ The app validates that `.env` and `.env.example` have matching keys on startup u
 | --------------------------------------- | ------------------------------------------------- | ------- |
 | `NODE_ENV`                              | Environment (`development`, `production`, `test`) | —       |
 | `PORT`                                  | Server port                                       | `3000`  |
-| `MONGODB_URL`                           | MongoDB connection string                         | —       |
+| `DB_ADAPTER`                            | Database adapter (`sequelize` or `mongoose`)      | `sequelize` |
+| `DATABASE_URL`                          | SQL connection string (when `DB_ADAPTER=sequelize`) | —       |
+| `MONGODB_URL`                           | MongoDB connection string (when `DB_ADAPTER=mongoose`) | —       |
 | `JWT_SECRET`                            | JWT signing secret                                | —       |
 | `JWT_ACCESS_EXPIRATION_MINUTES`         | Access token TTL                                  | `30`    |
 | `JWT_REFRESH_EXPIRATION_DAYS`           | Refresh token TTL                                 | `30`    |
@@ -227,15 +229,14 @@ Start the server and visit `http://localhost:3000/v1/docs` for interactive Swagg
 
 - **Controllers** handle HTTP request/response only, delegate to services
 - **Services** contain business logic, interact with models
-- **Models** define Mongoose schemas and data access
+- **Repositories** abstract database access via the adapter pattern (`DB_ADAPTER` env)
 
 Each module follows the structure:
 
 ```
 module/
-  ├── {name}.model.js       # Mongoose schema & plugins
   ├── {name}.controller.js  # HTTP handlers (uses catchAsync)
-  ├── {name}.service.js     # Business logic
+  ├── {name}.service.js     # Business logic (uses repository pattern)
   ├── {name}.routes.js      # Express router + Swagger JSDoc
   ├── {name}.validation.js  # Joi schemas
   └── index.js              # Exports all submodules
@@ -304,12 +305,12 @@ Custom validators:
 
 ### Database
 
-MongoDB via Mongoose with two custom plugins:
+Supports multiple database backends via the **repository pattern**:
 
-- **toJSON** — removes `__v`, timestamps, private fields; replaces `_id` with `id`
-- **paginate** — adds `.paginate(filter, { sortBy, limit, page })` to models
+- **PostgreSQL** via Sequelize (`DB_ADAPTER=sequelize`) — default
+- **MongoDB** via Mongoose (`DB_ADAPTER=mongoose`)
 
-In test environment, the database name is automatically suffixed with `-test`.
+Services access data through `getUserRepository()` / `getTokenRepository()`, never importing models directly. Each adapter implements `BaseRepository` with consistent `create`, `findById`, `paginate`, `updateById`, `deleteById`, etc.
 
 ### Logging & Monitoring
 
@@ -335,17 +336,12 @@ Configure SMTP settings via environment variables.
 | Authorization         | Role-based access control (RBAC)                      |
 | Password hashing      | bcryptjs (8 salt rounds)                              |
 | Security headers      | Helmet.js (HSTS, CSP, X-Frame-Options, etc.)          |
-| Input sanitization    | XSS-clean, express-mongo-sanitize                     |
+| Input sanitization    | XSS-clean, express-mongo-sanitize                    |
 | Parameter pollution   | HPP (HTTP Parameter Pollution) protection             |
 | Rate limiting         | 20 requests per 15 min on auth endpoints (production) |
 | CORS                  | Enabled (configurable origins)                        |
 | Secrets               | Environment variables (never hardcoded)               |
 | Token reuse detection | Blacklist + rotation on refresh                       |
-
-### Mongoose Plugins
-
-- **toJSON** — removes `__v`, timestamps, private fields; replaces `_id` with `id`
-- **paginate** — adds `.paginate(filter, { sortBy, limit, page })` to models
 
 ### Process Management
 
@@ -382,7 +378,7 @@ The frontend is a Next.js 15 app (React 19) using the App Router. It serves as a
 
 1. **Change detection** — only runs jobs for changed paths (backend, root)
 2. **Lint root** — ESLint on root config files (if changed)
-3. **Backend** — Node 24 + MongoDB 7 service container:
+3. **Backend** — Node 24 + database service container:
    - `pnpm install` → `pnpm lint` → `pnpm format:check` → `pnpm test:ci` → Code Climate coverage upload
 4. **Concurrency** — cancels in-progress runs on the same branch
 
@@ -448,7 +444,7 @@ Complexity thresholds:
 
 - **Framework:** Jest + Supertest
 - **Structure:** `services/backend/tests/` — `fixtures/`, `integration/`, `unit/`, `utils/`
-- **Database:** `setupTestDB` helper handles MongoDB setup/teardown per test suite
+- **Database:** `setupTestDB` helper handles database setup/teardown per test suite
 - **Data:** Faker for test data generation
 - **Coverage:** `text`, `lcov`, `clover`, `html` reporters
 - **Patterns:**
@@ -471,7 +467,7 @@ pnpm --filter @gsoft/backend test:watch  # Watch mode
 | Package manager    | pnpm 9+ (workspaces)                                               |
 | Backend framework  | Express.js                                                         |
 | Frontend framework | Next.js 15 (React 19, App Router)                                  |
-| Database           | MongoDB via Mongoose                                               |
+| Database           | PostgreSQL (Sequelize) or MongoDB (Mongoose) via repository pattern |
 | Authentication     | Passport.js (JWT)                                                  |
 | Validation         | Joi                                                                |
 | Documentation      | Swagger (swagger-jsdoc + swagger-ui-express)                       |
@@ -481,7 +477,7 @@ pnpm --filter @gsoft/backend test:watch  # Watch mode
 | Logging            | Winston + Morgan                                                   |
 | Error tracking     | Sentry                                                             |
 | Process manager    | PM2 (production)                                                   |
-| Security           | Helmet, CORS, HPP, XSS-clean, express-mongo-sanitize, rate-limiter |
+| Security           | Helmet, CORS, HPP, XSS-clean, express-mongo-sanitize, rate-limiter|
 | CI/CD              | GitHub Actions + semantic-release                                  |
 | Code quality       | Code Climate                                                       |
 | Containers         | Docker + Docker Compose                                            |
