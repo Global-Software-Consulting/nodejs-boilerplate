@@ -3,6 +3,7 @@ const validate = require('./validate');
 const { errorConverter, errorHandler } = require('./error');
 const { authLimiter } = require('./rateLimiter');
 const { correlationId, getCorrelationId } = require('./correlationId');
+const validateTwilioSignature = require('./twilioWebhook');
 
 module.exports = {
   auth,
@@ -12,4 +13,5 @@ module.exports = {
   authLimiter,
   correlationId,
   getCorrelationId,
+  validateTwilioSignature,
 };

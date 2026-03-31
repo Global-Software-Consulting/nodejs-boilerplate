@@ -39,6 +39,41 @@ components:
         refresh:
           $ref: '#/components/schemas/Token'
 
+    WhatsAppMessage:
+      type: object
+      properties:
+        id:
+          type: string
+        to:
+          type: string
+        from:
+          type: string
+        body:
+          type: string
+        messageType:
+          type: string
+          enum: [text, media, template]
+        status:
+          type: string
+        direction:
+          type: string
+          enum: [inbound, outbound]
+        sid:
+          type: string
+        conversationId:
+          type: string
+
+    Conversation:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: Conversation ID
+        lastMessage:
+          $ref: '#/components/schemas/WhatsAppMessage'
+        messageCount:
+          type: number
+
     Error:
       type: object
       properties:

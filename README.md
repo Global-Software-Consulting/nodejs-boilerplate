@@ -183,6 +183,10 @@ The app validates that `.env` and `.env.example` have matching keys on startup u
 | `SMTP_PASSWORD`                         | SMTP password                                     | —       |
 | `EMAIL_FROM`                            | Sender email address                              | —       |
 | `SENTRY_DSN`                            | Sentry DSN for error tracking                     | —       |
+| `TWILIO_ACCOUNT_SID`                    | Twilio account SID                                | —       |
+| `TWILIO_AUTH_TOKEN`                     | Twilio auth token                                 | —       |
+| `TWILIO_WHATSAPP_NUMBER`                | Twilio WhatsApp sender number                     | —       |
+| `TWILIO_WEBHOOK_BASE_URL`               | Public base URL for webhooks                      | —       |
 
 ### Frontend (`services/frontend/.env`)
 
@@ -214,6 +218,29 @@ The app validates that `.env` and `.env.example` have matching keys on startup u
 | GET    | `/v1/users/:userId` | Get user               | Owner or admin |
 | PATCH  | `/v1/users/:userId` | Update user            | Owner or admin |
 | DELETE | `/v1/users/:userId` | Delete user            | Owner or admin |
+
+### WhatsApp Messaging (`/v1/whatsapp`)
+
+| Method | Endpoint                                     | Description              | Auth             |
+| ------ | -------------------------------------------- | ------------------------ | ---------------- |
+| POST   | `/v1/whatsapp/messages`                      | Send WhatsApp message    | `sendWhatsapp`   |
+| GET    | `/v1/whatsapp/messages`                      | List messages            | `manageWhatsapp` |
+| GET    | `/v1/whatsapp/messages/:messageId`           | Get message              | `manageWhatsapp` |
+| GET    | `/v1/whatsapp/conversations`                 | List conversations       | `manageWhatsapp` |
+| GET    | `/v1/whatsapp/conversations/:conversationId` | Get conversation         | `manageWhatsapp` |
+| POST   | `/v1/whatsapp/webhook/incoming`              | Incoming message webhook | Twilio signature |
+| POST   | `/v1/whatsapp/webhook/status`                | Status callback webhook  | Twilio signature |
+
+Supports text, media (images/docs), and template messages via the Twilio WhatsApp API.
+
+**Webhook Setup:**
+
+```bash
+# Local development with ngrok
+ngrok http 3000
+# Set TWILIO_WEBHOOK_BASE_URL to the ngrok URL
+# Configure webhook URLs in Twilio WhatsApp Sandbox
+```
 
 ### API Docs
 
