@@ -183,6 +183,9 @@ The app validates that `.env` and `.env.example` have matching keys on startup u
 | `SMTP_PASSWORD`                         | SMTP password                                     | —       |
 | `EMAIL_FROM`                            | Sender email address                              | —       |
 | `SENTRY_DSN`                            | Sentry DSN for error tracking                     | —       |
+| `STRIPE_SECRET_KEY`                     | Stripe secret key                                 | —       |
+| `STRIPE_WEBHOOK_SECRET`                 | Stripe webhook signing secret                     | —       |
+| `STRIPE_PUBLISHABLE_KEY`                | Stripe publishable key                            | —       |
 
 ### Frontend (`services/frontend/.env`)
 
@@ -214,6 +217,35 @@ The app validates that `.env` and `.env.example` have matching keys on startup u
 | GET    | `/v1/users/:userId` | Get user               | Owner or admin |
 | PATCH  | `/v1/users/:userId` | Update user            | Owner or admin |
 | DELETE | `/v1/users/:userId` | Delete user            | Owner or admin |
+
+### Stripe Payments (`/v1/stripe`)
+
+| Method | Endpoint                                   | Description             | Auth                |
+| ------ | ------------------------------------------ | ----------------------- | ------------------- |
+| POST   | `/v1/stripe/customers`                     | Create Stripe customer  | `manageOwnPayments` |
+| PATCH  | `/v1/stripe/customers`                     | Update Stripe customer  | `manageOwnPayments` |
+| DELETE | `/v1/stripe/customers`                     | Delete Stripe customer  | `manageOwnPayments` |
+| POST   | `/v1/stripe/payment-intents`               | Create payment intent   | `manageOwnPayments` |
+| GET    | `/v1/stripe/payments`                      | List payments           | `manageOwnPayments` |
+| GET    | `/v1/stripe/payments/:paymentId`           | Get payment             | `manageOwnPayments` |
+| POST   | `/v1/stripe/payments/:paymentId/refunds`   | Create refund           | `manageOwnPayments` |
+| POST   | `/v1/stripe/checkout-sessions`             | Create checkout session | `manageOwnPayments` |
+| POST   | `/v1/stripe/subscriptions`                 | Create subscription     | `manageOwnPayments` |
+| GET    | `/v1/stripe/subscriptions`                 | List subscriptions      | `manageOwnPayments` |
+| GET    | `/v1/stripe/subscriptions/:subscriptionId` | Get subscription        | `manageOwnPayments` |
+| PATCH  | `/v1/stripe/subscriptions/:subscriptionId` | Update subscription     | `manageOwnPayments` |
+| DELETE | `/v1/stripe/subscriptions/:subscriptionId` | Cancel subscription     | `manageOwnPayments` |
+| GET    | `/v1/stripe/invoices`                      | List invoices           | `manageOwnPayments` |
+| GET    | `/v1/stripe/invoices/:invoiceId`           | Get invoice             | `manageOwnPayments` |
+| POST   | `/v1/stripe/portal-sessions`               | Create billing portal   | `manageOwnPayments` |
+| POST   | `/v1/stripe/webhook`                       | Stripe webhook          | Stripe signature    |
+
+**Webhook Setup:**
+
+```bash
+# Local development with Stripe CLI
+stripe listen --forward-to localhost:3000/v1/stripe/webhook
+```
 
 ### API Docs
 
