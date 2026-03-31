@@ -54,9 +54,14 @@ const getMessageById = async (messageId, userId) => {
 const getMessageBySid = async (sid) => Message.findOne({ sid });
 
 const handleIncomingSms = async ({ From, To, Body, MessageSid, NumSegments }) => {
+  // Look up the user by matching the Twilio phone number they sent TO
+  const { getUserRepository } = require('../../../repositories');
+  const recipient = await getUserRepository().findOne({ phone: To });
+
   const message = await Message.findOneAndUpdate(
     { sid: MessageSid },
     {
+      ...(recipient && { user: recipient.id }),
       to: To,
       from: From,
       body: Body,
@@ -119,9 +124,14 @@ const handleCallStatusUpdate = async ({ CallSid, CallStatus, CallDuration, Error
 };
 
 const handleIncomingCall = async ({ From, To, CallSid }) => {
+  // Look up the user by matching the Twilio phone number they called
+  const { getUserRepository } = require('../../../repositories');
+  const recipient = await getUserRepository().findOne({ phone: To });
+
   await Call.findOneAndUpdate(
     { sid: CallSid },
     {
+      ...(recipient && { user: recipient.id }),
       to: To,
       from: From,
       status: 'ringing',
