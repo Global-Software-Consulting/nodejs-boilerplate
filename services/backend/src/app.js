@@ -1,5 +1,6 @@
 const express = require('express');
 const helmet = require('helmet');
+const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
 const compression = require('compression');
@@ -32,6 +33,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // sanitize request data
+app.use(mongoSanitize());
 app.use(xss());
 
 // prevent HTTP parameter pollution
