@@ -1,8 +1,21 @@
-# GSoft Node.js Monorepo
+<div align="center">
+
+# 🚀 GSoft Node.js Monorepo
+
+[![Node.js](https://img.shields.io/badge/Node.js-24-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
+[![pnpm](https://img.shields.io/badge/pnpm-9+-F69220?logo=pnpm&logoColor=white)](https://pnpm.io/)
+[![Express](https://img.shields.io/badge/Express.js-000000?logo=express&logoColor=white)](https://expressjs.com/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-47A248?logo=mongodb&logoColor=white)](https://www.mongodb.com/)
+[![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](services/backend/LICENSE)
+
+</div>
 
 A production-ready Node.js monorepo for building RESTful APIs. Ships with JWT authentication, role-based access control, request validation, Swagger documentation, Sentry error tracking, Docker support, CI/CD with semantic-release, and a Next.js landing page.
 
-## Quick Start
+---
+
+## ⚡ Quick Start
 
 The interactive setup script detects your OS, installs prerequisites, and bootstraps the dev environment:
 
@@ -14,7 +27,7 @@ pnpm setup
 
 It will prompt you to select a service (Backend / Frontend / Both), then handle Node.js, pnpm, Docker, and dependency installation automatically.
 
-## Manual Setup
+## 🛠️ Manual Setup
 
 ```bash
 # 1. Install dependencies (pnpm only)
@@ -35,13 +48,13 @@ pnpm dev
 pnpm dev:frontend
 ```
 
-## Prerequisites
+## 📋 Prerequisites
 
 - Node.js >= 24
 - pnpm >= 9
 - Docker (for backend with MongoDB)
 
-## Project Structure
+## 📁 Project Structure
 
 ```
 .
@@ -109,9 +122,9 @@ pnpm dev:frontend
 │       └── .env.example                    # Environment template
 ```
 
-## Commands
+## 💻 Commands
 
-### Root (monorepo)
+### 📦 Root (monorepo)
 
 ```bash
 pnpm install          # Install all dependencies
@@ -128,7 +141,7 @@ pnpm format:check     # Check formatting
 pnpm release          # semantic-release (CI only)
 ```
 
-### Frontend (`services/frontend`)
+### 🌐 Frontend (`services/frontend`)
 
 ```bash
 pnpm --filter @gsoft/frontend dev    # Dev server (http://localhost:3000)
@@ -137,7 +150,7 @@ pnpm --filter @gsoft/frontend start  # Start production server
 pnpm --filter @gsoft/frontend lint   # Next.js ESLint
 ```
 
-### Backend (`services/backend`)
+### 🔧 Backend (`services/backend`)
 
 ```bash
 pnpm --filter @gsoft/backend dev          # Dev server with hot reload (Nodemon)
@@ -147,7 +160,7 @@ pnpm --filter @gsoft/backend test:watch   # Watch mode
 pnpm --filter @gsoft/backend test:ci      # Tests with coverage
 ```
 
-### Docker
+### 🐳 Docker
 
 ```bash
 # From services/backend/
@@ -161,9 +174,9 @@ Docker Compose runs:
 - **node-app** — `node:24-alpine`, exposes port 3000, mounts source for hot reload (dev)
 - **mongodb** — `mongo:4.2.1-bionic`, exposes port 27017, persistent volume `dbdata`
 
-## Environment Variables
+## 🔐 Environment Variables
 
-### Backend (`services/backend/.env`)
+### ⚙️ Backend (`services/backend/.env`)
 
 The app validates that `.env` and `.env.example` have matching keys on startup using Joi.
 
@@ -184,15 +197,15 @@ The app validates that `.env` and `.env.example` have matching keys on startup u
 | `EMAIL_FROM`                            | Sender email address                              | —       |
 | `SENTRY_DSN`                            | Sentry DSN for error tracking                     | —       |
 
-### Frontend (`services/frontend/.env`)
+### 🌐 Frontend (`services/frontend/.env`)
 
 | Variable              | Description          | Default                 |
 | --------------------- | -------------------- | ----------------------- |
 | `NEXT_PUBLIC_API_URL` | Backend API base URL | `http://localhost:3000` |
 
-## API Endpoints
+## 🌍 API Endpoints
 
-### Auth (`/v1/auth`)
+### 🔑 Auth (`/v1/auth`)
 
 | Method | Endpoint                           | Description                      | Auth |
 | ------ | ---------------------------------- | -------------------------------- | ---- |
@@ -205,7 +218,7 @@ The app validates that `.env` and `.env.example` have matching keys on startup u
 | POST   | `/v1/auth/send-verification-email` | Send email verification          | Yes  |
 | POST   | `/v1/auth/verify-email`            | Verify email with token          | No   |
 
-### Users (`/v1/users`)
+### 👥 Users (`/v1/users`)
 
 | Method | Endpoint            | Description            | Auth           |
 | ------ | ------------------- | ---------------------- | -------------- |
@@ -215,13 +228,13 @@ The app validates that `.env` and `.env.example` have matching keys on startup u
 | PATCH  | `/v1/users/:userId` | Update user            | Owner or admin |
 | DELETE | `/v1/users/:userId` | Delete user            | Owner or admin |
 
-### API Docs
+### 📚 API Docs
 
 Start the server and visit `http://localhost:3000/v1/docs` for interactive Swagger documentation. The JSON spec is available at `/v1/docs/spec`.
 
-## Architecture
+## 🏗️ Architecture
 
-### Layers
+### 🧱 Layers
 
 **Controller** → **Service** → **Model**
 
@@ -241,11 +254,11 @@ module/
   └── index.js              # Exports all submodules
 ```
 
-### API Versioning
+### 🔀 API Versioning
 
 Routes are organized under `/v1` and `/v2`, allowing gradual deprecation of endpoints while maintaining backwards compatibility.
 
-### Error Handling
+### ⚠️ Error Handling
 
 Throw `ApiError` anywhere — the centralized error middleware catches it:
 
@@ -262,7 +275,7 @@ Async handlers are wrapped with `catchAsync` to forward errors automatically.
 - **Production:** hides internal details, only logs 5xx errors
 - **5xx errors** are reported to Sentry automatically
 
-### Authentication & Authorization
+### 🔒 Authentication & Authorization
 
 JWT-based via Passport.js with Bearer token in the `Authorization` header.
 
@@ -289,7 +302,7 @@ router.delete('/users/:id', auth('manageUsers'), controller.deleteUser);
 
 Token reuse detection: tokens are blacklisted on refresh, and new tokens are generated.
 
-### Validation
+### ✅ Validation
 
 All request input is validated at the route level with Joi schemas via the `validate` middleware:
 
@@ -302,7 +315,7 @@ Custom validators:
 - `objectId` — validates MongoDB ObjectId format
 - `password` — minimum 8 characters, at least 1 letter and 1 number
 
-### Database
+### 🗄️ Database
 
 MongoDB via Mongoose with two custom plugins:
 
@@ -311,14 +324,14 @@ MongoDB via Mongoose with two custom plugins:
 
 In test environment, the database name is automatically suffixed with `-test`.
 
-### Logging & Monitoring
+### 📊 Logging & Monitoring
 
 - **Winston** — structured logging with dev/prod formats
 - **Morgan** — HTTP request logging (separate success/error streams)
 - **Correlation ID** — per-request UUID via `AsyncLocalStorage`, included in logs and `x-correlation-id` response header for distributed tracing
 - **Sentry** — production error tracking for 5xx errors
 
-### Email
+### 📧 Email
 
 Nodemailer-based email service for:
 
@@ -327,7 +340,7 @@ Nodemailer-based email service for:
 
 Configure SMTP settings via environment variables.
 
-### Security
+### 🛡️ Security
 
 | Feature               | Implementation                                        |
 | --------------------- | ----------------------------------------------------- |
@@ -342,19 +355,19 @@ Configure SMTP settings via environment variables.
 | Secrets               | Environment variables (never hardcoded)               |
 | Token reuse detection | Blacklist + rotation on refresh                       |
 
-### Mongoose Plugins
+### 🔌 Mongoose Plugins
 
 - **toJSON** — removes `__v`, timestamps, private fields; replaces `_id` with `id`
 - **paginate** — adds `.paginate(filter, { sortBy, limit, page })` to models
 
-### Process Management
+### ⚙️ Process Management
 
 PM2 in production (`ecosystem.config.json`):
 
 - Single instance, auto-restart, timestamp logging
 - Start with `pnpm start` or `pnpm docker:prod`
 
-## Frontend
+## 🖥️ Frontend
 
 The frontend is a Next.js 15 app (React 19) using the App Router. It serves as a landing page with:
 
@@ -364,9 +377,9 @@ The frontend is a Next.js 15 app (React 19) using the App Router. It serves as a
 - Links to API docs (`/v1/docs`) and GitHub
 - Dark minimal aesthetic with plain CSS (no framework)
 
-## CI/CD
+## 🔄 CI/CD
 
-### GitHub Actions Workflows
+### 🤖 GitHub Actions Workflows
 
 | Workflow                | Trigger                         | Purpose                                                     |
 | ----------------------- | ------------------------------- | ----------------------------------------------------------- |
@@ -378,7 +391,7 @@ The frontend is a Next.js 15 app (React 19) using the App Router. It serves as a
 | `labeler.yml`           | PRs                             | Auto-labels PRs by path                                     |
 | `stale.yml`             | Scheduled                       | Marks and closes stale issues/PRs                           |
 
-### CI Pipeline (`ci.yml`)
+### 🔄 CI Pipeline (`ci.yml`)
 
 1. **Change detection** — only runs jobs for changed paths (backend, root)
 2. **Lint root** — ESLint on root config files (if changed)
@@ -386,7 +399,7 @@ The frontend is a Next.js 15 app (React 19) using the App Router. It serves as a
    - `pnpm install` → `pnpm lint` → `pnpm format:check` → `pnpm test:ci` → Code Climate coverage upload
 4. **Concurrency** — cancels in-progress runs on the same branch
 
-### semantic-release
+### 🏷️ semantic-release
 
 Configured in `.releaserc.json`:
 
@@ -395,7 +408,7 @@ Configured in `.releaserc.json`:
 - Commits `CHANGELOG.md` and `package.json` back to the repo
 - Creates a GitHub release
 
-### Dependabot
+### 🤖 Dependabot
 
 Automated weekly dependency updates (Mondays):
 
@@ -403,9 +416,9 @@ Automated weekly dependency updates (Mondays):
 - PR limits: 10 (root/backend), 5 (actions)
 - Commit prefix: `chore(deps):` or `chore(ci):`
 
-## Code Quality
+## ✨ Code Quality
 
-### ESLint
+### 🔍 ESLint
 
 ESLint 9 flat config with:
 
@@ -414,13 +427,13 @@ ESLint 9 flat config with:
 - `no-console: error`, strict equality, no unused vars
 - Frontend (`services/frontend/`) is excluded — uses Next.js built-in ESLint
 
-### Prettier
+### 💅 Prettier
 
 ```
 Single quotes, 125 print width, trailing commas, semicolons, 2-space indent, LF line endings
 ```
 
-### Code Climate
+### 📊 Code Climate
 
 Complexity thresholds:
 
@@ -428,14 +441,14 @@ Complexity thresholds:
 - Method lines: 30, Return statements: 4
 - Plugins: ESLint 9, duplication detection
 
-### Git Hooks (Husky)
+### 🪝 Git Hooks (Husky)
 
 | Hook         | Action                                                                                               |
 | ------------ | ---------------------------------------------------------------------------------------------------- |
 | `pre-commit` | Runs lint-staged (ESLint --fix + Prettier on staged `.js` files; Prettier on `.json`, `.md`, `.yml`) |
 | `commit-msg` | Runs commitlint (validates conventional commit format)                                               |
 
-### CODEOWNERS
+### 👥 CODEOWNERS
 
 ```
 *                                           @gsoft/engineering
@@ -444,7 +457,7 @@ Complexity thresholds:
 /services/backend/src/middlewares/auth.js   @gsoft/backend-team @gsoft/security-team
 ```
 
-## Testing
+## 🧪 Testing
 
 - **Framework:** Jest + Supertest
 - **Structure:** `services/backend/tests/` — `fixtures/`, `integration/`, `unit/`, `utils/`
@@ -463,7 +476,7 @@ pnpm test:ci          # Tests with coverage (CI)
 pnpm --filter @gsoft/backend test:watch  # Watch mode
 ```
 
-## Tech Stack
+## 🧰 Tech Stack
 
 | Layer              | Technology                                                         |
 | ------------------ | ------------------------------------------------------------------ |
@@ -486,7 +499,7 @@ pnpm --filter @gsoft/backend test:watch  # Watch mode
 | Code quality       | Code Climate                                                       |
 | Containers         | Docker + Docker Compose                                            |
 
-## Contributing
+## 🤝 Contributing
 
 - Use `pnpm` only (enforced via `preinstall` hook and `.npmrc`)
 - Follow [Conventional Commits](https://www.conventionalcommits.org/): `type(scope): message`
@@ -498,6 +511,14 @@ pnpm --filter @gsoft/backend test:watch  # Watch mode
 - Commit messages are validated by commitlint
 - See `CONTRIBUTING.md` for full guidelines
 
-## License
+## 📄 License
 
 [MIT](services/backend/LICENSE)
+
+---
+
+<div align="center">
+
+Made with ❤️ by [GSoft](https://github.com/Global-Software-Consulting)
+
+</div>
