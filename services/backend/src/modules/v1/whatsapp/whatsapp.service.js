@@ -92,9 +92,14 @@ const handleIncomingMessage = async ({ From, To, Body, MessageSid, NumMedia, Med
     mediaUrl.push(MediaUrl0);
     if (MediaContentType0) mediaContentType.push(MediaContentType0);
   }
+  // Look up the user by matching the WhatsApp number they sent TO
+  const { getUserRepository } = require('../../../repositories');
+  const recipient = await getUserRepository().findOne({ phone: to });
+
   const message = await WhatsAppMessage.findOneAndUpdate(
     { sid: MessageSid },
     {
+      ...(recipient && { user: recipient.id }),
       to,
       from,
       body: Body || '',
