@@ -39,6 +39,44 @@ components:
         refresh:
           $ref: '#/components/schemas/Token'
 
+    Message:
+      type: object
+      properties:
+        id:
+          type: string
+        to:
+          type: string
+        from:
+          type: string
+        body:
+          type: string
+        status:
+          type: string
+        direction:
+          type: string
+          enum: [inbound, outbound]
+        sid:
+          type: string
+
+    Call:
+      type: object
+      properties:
+        id:
+          type: string
+        to:
+          type: string
+        from:
+          type: string
+        status:
+          type: string
+        direction:
+          type: string
+          enum: [inbound, outbound]
+        sid:
+          type: string
+        duration:
+          type: number
+
     Error:
       type: object
       properties:
