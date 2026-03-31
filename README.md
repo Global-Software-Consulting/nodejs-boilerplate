@@ -167,24 +167,24 @@ Docker Compose runs:
 
 The app validates that `.env` and `.env.example` have matching keys on startup using Joi.
 
-| Variable                                | Description                                       | Default |
-| --------------------------------------- | ------------------------------------------------- | ------- |
-| `NODE_ENV`                              | Environment (`development`, `production`, `test`) | —       |
-| `PORT`                                  | Server port                                       | `3000`  |
-| `DB_ADAPTER`                            | Database adapter (`sequelize` or `mongoose`)      | `sequelize` |
-| `DATABASE_URL`                          | SQL connection string (when `DB_ADAPTER=sequelize`) | —       |
-| `MONGODB_URL`                           | MongoDB connection string (when `DB_ADAPTER=mongoose`) | —       |
-| `JWT_SECRET`                            | JWT signing secret                                | —       |
-| `JWT_ACCESS_EXPIRATION_MINUTES`         | Access token TTL                                  | `30`    |
-| `JWT_REFRESH_EXPIRATION_DAYS`           | Refresh token TTL                                 | `30`    |
-| `JWT_RESET_PASSWORD_EXPIRATION_MINUTES` | Reset password token TTL                          | `10`    |
-| `JWT_VERIFY_EMAIL_EXPIRATION_MINUTES`   | Email verification token TTL                      | `10`    |
-| `SMTP_HOST`                             | SMTP server host                                  | —       |
-| `SMTP_PORT`                             | SMTP server port                                  | `587`   |
-| `SMTP_USERNAME`                         | SMTP username                                     | —       |
-| `SMTP_PASSWORD`                         | SMTP password                                     | —       |
-| `EMAIL_FROM`                            | Sender email address                              | —       |
-| `SENTRY_DSN`                            | Sentry DSN for error tracking                     | —       |
+| Variable                                | Description                                            | Default     |
+| --------------------------------------- | ------------------------------------------------------ | ----------- |
+| `NODE_ENV`                              | Environment (`development`, `production`, `test`)      | —           |
+| `PORT`                                  | Server port                                            | `3000`      |
+| `DB_ADAPTER`                            | Database adapter (`sequelize` or `mongoose`)           | `sequelize` |
+| `DATABASE_URL`                          | SQL connection string (when `DB_ADAPTER=sequelize`)    | —           |
+| `MONGODB_URL`                           | MongoDB connection string (when `DB_ADAPTER=mongoose`) | —           |
+| `JWT_SECRET`                            | JWT signing secret                                     | —           |
+| `JWT_ACCESS_EXPIRATION_MINUTES`         | Access token TTL                                       | `30`        |
+| `JWT_REFRESH_EXPIRATION_DAYS`           | Refresh token TTL                                      | `30`        |
+| `JWT_RESET_PASSWORD_EXPIRATION_MINUTES` | Reset password token TTL                               | `10`        |
+| `JWT_VERIFY_EMAIL_EXPIRATION_MINUTES`   | Email verification token TTL                           | `10`        |
+| `SMTP_HOST`                             | SMTP server host                                       | —           |
+| `SMTP_PORT`                             | SMTP server port                                       | `587`       |
+| `SMTP_USERNAME`                         | SMTP username                                          | —           |
+| `SMTP_PASSWORD`                         | SMTP password                                          | —           |
+| `EMAIL_FROM`                            | Sender email address                                   | —           |
+| `SENTRY_DSN`                            | Sentry DSN for error tracking                          | —           |
 
 ### Frontend (`services/frontend/.env`)
 
@@ -336,7 +336,7 @@ Configure SMTP settings via environment variables.
 | Authorization         | Role-based access control (RBAC)                      |
 | Password hashing      | bcryptjs (8 salt rounds)                              |
 | Security headers      | Helmet.js (HSTS, CSP, X-Frame-Options, etc.)          |
-| Input sanitization    | XSS-clean, express-mongo-sanitize                    |
+| Input sanitization    | XSS-clean, express-mongo-sanitize                     |
 | Parameter pollution   | HPP (HTTP Parameter Pollution) protection             |
 | Rate limiting         | 20 requests per 15 min on auth endpoints (production) |
 | CORS                  | Enabled (configurable origins)                        |
@@ -461,26 +461,26 @@ pnpm --filter @gsoft/backend test:watch  # Watch mode
 
 ## Tech Stack
 
-| Layer              | Technology                                                         |
-| ------------------ | ------------------------------------------------------------------ |
-| Runtime            | Node.js 24 (CommonJS)                                              |
-| Package manager    | pnpm 9+ (workspaces)                                               |
-| Backend framework  | Express.js                                                         |
-| Frontend framework | Next.js 15 (React 19, App Router)                                  |
+| Layer              | Technology                                                          |
+| ------------------ | ------------------------------------------------------------------- |
+| Runtime            | Node.js 24 (CommonJS)                                               |
+| Package manager    | pnpm 9+ (workspaces)                                                |
+| Backend framework  | Express.js                                                          |
+| Frontend framework | Next.js 15 (React 19, App Router)                                   |
 | Database           | PostgreSQL (Sequelize) or MongoDB (Mongoose) via repository pattern |
-| Authentication     | Passport.js (JWT)                                                  |
-| Validation         | Joi                                                                |
-| Documentation      | Swagger (swagger-jsdoc + swagger-ui-express)                       |
-| Testing            | Jest + Supertest                                                   |
-| Linting            | ESLint 9 (flat config) + Prettier                                  |
-| Email              | Nodemailer                                                         |
-| Logging            | Winston + Morgan                                                   |
-| Error tracking     | Sentry                                                             |
-| Process manager    | PM2 (production)                                                   |
-| Security           | Helmet, CORS, HPP, XSS-clean, express-mongo-sanitize, rate-limiter|
-| CI/CD              | GitHub Actions + semantic-release                                  |
-| Code quality       | Code Climate                                                       |
-| Containers         | Docker + Docker Compose                                            |
+| Authentication     | Passport.js (JWT)                                                   |
+| Validation         | Joi                                                                 |
+| Documentation      | Swagger (swagger-jsdoc + swagger-ui-express)                        |
+| Testing            | Jest + Supertest                                                    |
+| Linting            | ESLint 9 (flat config) + Prettier                                   |
+| Email              | Nodemailer                                                          |
+| Logging            | Winston + Morgan                                                    |
+| Error tracking     | Sentry                                                              |
+| Process manager    | PM2 (production)                                                    |
+| Security           | Helmet, CORS, HPP, XSS-clean, express-mongo-sanitize, rate-limiter  |
+| CI/CD              | GitHub Actions + semantic-release                                   |
+| Code quality       | Code Climate                                                        |
+| Containers         | Docker + Docker Compose                                             |
 
 ## Contributing
 
