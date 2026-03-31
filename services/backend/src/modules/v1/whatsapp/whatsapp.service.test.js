@@ -1,4 +1,3 @@
-const httpStatus = require('http-status');
 const { ApiError } = require('../../../utils');
 
 // Mock Twilio client
