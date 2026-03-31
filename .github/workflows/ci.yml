@@ -88,6 +88,9 @@ jobs:
     timeout-minutes: 15
     env:
       NODE_ENV: test
+      DB_ADAPTER: sequelize
+      MONGODB_URL: ''
+      DATABASE_URL: ''
       JWT_SECRET: test-jwt-secret
       JWT_ACCESS_EXPIRATION_MINUTES: 30
       JWT_REFRESH_EXPIRATION_DAYS: 30
