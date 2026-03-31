@@ -58,6 +58,10 @@ const envVarsSchema = Joi.object()
     // Sentry
     SENTRY_DSN: Joi.string().uri().allow('').default('').description('Sentry DSN for error tracking'),
 
+    // Stripe (optional)
+    STRIPE_SECRET_KEY: Joi.string().allow('').default('').description('Stripe secret key'),
+    STRIPE_WEBHOOK_SECRET: Joi.string().allow('').default('').description('Stripe webhook signing secret'),
+
     // Workflow Engines (optional)
     INNGEST_EVENT_KEY: Joi.string().allow('').default('').description('Inngest event key'),
     INNGEST_SIGNING_KEY: Joi.string().allow('').default('').description('Inngest signing key'),

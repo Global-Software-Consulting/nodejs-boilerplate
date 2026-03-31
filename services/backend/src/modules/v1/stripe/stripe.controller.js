@@ -80,7 +80,7 @@ const listInvoices = catchAsync(async (req, res) => {
 });
 
 const getInvoice = catchAsync(async (req, res) => {
-  const invoice = await stripeService.getInvoice(req.params.invoiceId);
+  const invoice = await stripeService.getInvoice(req.params.invoiceId, req.user);
   res.send(invoice);
 });
 

@@ -174,9 +174,12 @@ const listInvoices = async (user, { limit, startingAfter }) => {
   return stripe.invoices.list(params);
 };
 
-const getInvoice = async (invoiceId) => {
+const getInvoice = async (invoiceId, user) => {
+  if (!user.stripeCustomerId) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Invoice not found');
+  }
   const invoice = await stripe.invoices.retrieve(invoiceId);
-  if (!invoice) {
+  if (!invoice || invoice.customer !== user.stripeCustomerId) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Invoice not found');
   }
   return invoice;
