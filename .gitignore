@@ -20,15 +20,17 @@ pnpm-debug.log*
 .DS_Store
 Thumbs.db
 
-# IDE - user-specific files (shared configs are committed)
-.idea/*
-!.idea/codeStyles/
-!.idea/inspectionProfiles/
-.vscode/*
-!.vscode/settings.json
-!.vscode/extensions.json
+# IDE
+.idea/
+.vscode/
 *.swp
 *.swo
+
+# AI tool configs
+.claude/
+.codex/
+.cursorrules
+AGENTS.md
 
 # Logs
 *.log

@@ -1,13 +1,16 @@
 <div align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=2,6,12,14,24&height=160&section=header&text=Node.js%20Production%20Starter&fontSize=36&fontColor=ffffff&animation=twinkling&fontAlignY=36&desc=Express%20%E2%80%A2%20MongoDB%20%E2%80%A2%20JWT%20Auth%20%E2%80%A2%20Docker%20%E2%80%A2%20CI%2FCD&descAlignY=58&descSize=14&descColor=a8b2d8" width="100%" />
+</div>
 
-# 🚀 GSoft Node.js Monorepo
+<div align="center">
 
 [![Node.js](https://img.shields.io/badge/Node.js-24-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
 [![pnpm](https://img.shields.io/badge/pnpm-9+-F69220?logo=pnpm&logoColor=white)](https://pnpm.io/)
 [![Express](https://img.shields.io/badge/Express.js-000000?logo=express&logoColor=white)](https://expressjs.com/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-47A248?logo=mongodb&logoColor=white)](https://www.mongodb.com/)
 [![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](services/backend/LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![CI](https://github.com/Global-Software-Consulting/nodejs-boilerplate/actions/workflows/ci.yml/badge.svg)](https://github.com/Global-Software-Consulting/nodejs-boilerplate/actions/workflows/ci.yml)
 
 </div>
 
@@ -513,12 +516,20 @@ pnpm --filter @gsoft/backend test:watch  # Watch mode
 
 ## 📄 License
 
-[MIT](services/backend/LICENSE)
+[MIT](LICENSE)
 
 ---
 
 <div align="center">
 
-Made with ❤️ by [GSoft](https://github.com/Global-Software-Consulting)
+**Built and maintained by [Global Software Consulting](https://github.com/Global-Software-Consulting)**
 
+We build production software, AI agents, and developer tools for startups and enterprises.
+
+<a href="https://gsoftconsulting.com/">Website</a> &nbsp;&middot;&nbsp; <a href="mailto:sales@gsoftconsulting.com">Hire Us</a> &nbsp;&middot;&nbsp; <a href="https://pk.linkedin.com/company/global-software-consulting">LinkedIn</a>
+
+</div>
+
+<div align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=2,6,12,14,24&height=100&section=footer" width="100%" />
 </div>
