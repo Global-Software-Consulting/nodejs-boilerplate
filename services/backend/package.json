@@ -25,7 +25,7 @@
     "docker:test": "docker-compose -f docker/docker-compose.yml -f docker/docker-compose.test.yml up"
   },
   "dependencies": {
-    "@restatedev/restate-sdk": "^1.14.3",
+    "@restatedev/restate-sdk": "^1.14.4",
     "@sentry/node": "7",
     "@temporalio/activity": "^1.17.2",
     "@temporalio/client": "^1.17.2",
@@ -38,7 +38,7 @@
     "dotenv": "^17.4.2",
     "express": "^4.17.1",
     "express-rate-limit": "^8.5.2",
-    "helmet": "^8.1.0",
+    "helmet": "^8.2.0",
     "hpp": "^0.2.3",
     "http-status": "^2.1.0",
     "inngest": "^3.0.0",
@@ -50,7 +50,7 @@
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.0",
     "pm2": "^5.1.0",
-    "swagger-jsdoc": "^6.0.8",
+    "swagger-jsdoc": "^6.3.0",
     "swagger-ui-express": "^4.1.6",
     "validator": "^13.15.35",
     "winston": "^3.2.1",
