@@ -26,7 +26,7 @@
   },
   "dependencies": {
     "@restatedev/restate-sdk": "^1.14.4",
-    "@sentry/node": "7",
+    "@sentry/node": "10",
     "@temporalio/activity": "^1.17.2",
     "@temporalio/client": "^1.17.2",
     "@temporalio/worker": "^1.17.2",
