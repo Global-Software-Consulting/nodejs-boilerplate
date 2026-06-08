@@ -25,7 +25,7 @@
     "docker:test": "docker-compose -f docker/docker-compose.yml -f docker/docker-compose.test.yml up"
   },
   "dependencies": {
-    "@restatedev/restate-sdk": "^1.14.4",
+    "@restatedev/restate-sdk": "^1.14.5",
     "@sentry/node": "7",
     "@temporalio/activity": "^1.17.2",
     "@temporalio/client": "^1.17.2",
@@ -45,7 +45,7 @@
     "joi": "^18.2.1",
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.24.0",
-    "morgan": "^1.9.1",
+    "morgan": "^1.11.0",
     "nodemailer": "^6.3.1",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.0",
